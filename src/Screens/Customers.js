@@ -7,6 +7,8 @@ import { Link, useNavigate } from "react-router-dom";
 import { usePermissions } from "../Hooks/usePermissions";
 import AddCustomer from "../Includes/Customer/AddCustomer";
 import ActionButton from "../Components/ActionButton";
+import CardHeader from "../Components/CardHeader";
+import Button from "../Components/Button";
 
 export default function Customers(){
     const permissions = usePermissions();
@@ -14,6 +16,7 @@ export default function Customers(){
     
     const [search, setSearch] = useState("");
     const [customers, setCustomers] = useState([]);
+    const [data, setData] = useState([]);
     const [perms, setPerms] = useState([]);
     const [isEditing, setIsEditing] = useState(false);
     
@@ -23,8 +26,8 @@ export default function Customers(){
         axios
           .get(`${Helpers.baseUrl}customers/all/${Helpers.authParentId}`, Helpers.headers)
           .then((response) => {
-            console.log(response.data);
-            setCustomers(response.data.reverse());
+              setCustomers(response.data.reverse());
+              setData(response.data);
           })
           .catch((error) => {
             Helpers.unauthenticated(error, navigate);
@@ -52,21 +55,7 @@ export default function Customers(){
                     <div className="col-8">
                         <div className="card">
                             <div className="card-body border-bottom">
-                                <div className="row" style={{ justifyContent: "center", alignItems: "center" }}>
-                                <div className="col-9">
-                                    <h3>
-                                    <img src="/images/icons/clients.png" alt="clients" style={{height:30, marginRight:10}} /> All Customers
-                                    </h3>
-                                </div>
-                                <div className="col-3">
-                                    <label>Search</label>
-                                    <input
-                                        className="form-control"
-                                        value={search}
-                                        onChange={(e) => setSearch(e.target.value)}
-                                    />
-                                </div>
-                                </div>
+                                <CardHeader setState={setCustomers} data={data} fields={["name", "phone"]} />
                                 <DataTable
                                 columns={[
                                     "Sr. #",

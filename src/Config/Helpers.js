@@ -116,6 +116,22 @@ class Helpers{
             ],
         });
     }
+
+    static search = (query, data, fields) => {
+        if(query){
+            let filteredData = data.filter(row => {
+                for(let i = 0; i < fields.length; i++){
+                    let field = fields[i];
+                    if(row[field].toLowerCase().includes(query.toLowerCase())){
+                        return row;
+                    }
+                }
+            });
+            return filteredData;
+        }else{
+            return data;
+        }
+    }
 }
 
 export default Helpers;

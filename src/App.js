@@ -4,6 +4,9 @@ import { Navigate } from "react-router-dom";
 import Home from "./Screens/Dashboard";
 import Layout from "./Screens/Layouts/AppLayout";
 import Customers from "./Screens/Customers";
+import ProfileSettings from "./Screens/ProfileSettings";
+import Roles from "./Screens/Roles/Roles";
+import Permissions from "./Screens/Roles/Permissions";
 
 function Auth({children}){
   let user = localStorage.getItem('user');
@@ -34,6 +37,9 @@ function App() {
         <Route path="/user" element={<Layout/>}>
           <Route path="/user/dashboard" element={<Auth><Home/></Auth>} />
           <Route path="/user/customers" element={<Auth><Customers/></Auth>} />
+          <Route path="/user/profile-settings" element={<Auth><ProfileSettings /></Auth>} />
+          <Route path="/user/roles" element={<Auth><Roles /></Auth>} />
+          <Route path="/user/manage-permissions/:role_name/:role_id" element={<Auth><Permissions /></Auth>} />
         </Route>
       </Routes>
     </BrowserRouter>
