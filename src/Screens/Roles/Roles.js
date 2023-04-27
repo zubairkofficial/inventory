@@ -7,14 +7,15 @@ import AddRole from "../../Includes/Roles/AddRole";
 import { usePermissions } from "../../Hooks/usePermissions";
 import PageTitle from "../../Components/PageTitle";
 import ActionButton from "../../Components/ActionButton";
+import CardHeader from "../../Components/CardHeader";
+import { useTitle } from "../../Hooks/useTitle";
 
 function Roles() {
+    useTitle("Roles & Permissions");
   const permissions = usePermissions();
   const addRoleRef = useRef(null);
-
-  const [search, setSearch] = useState("");
-  const [isEditing, setIsEditing] = useState(false);
   const [roles, setRoles] = useState([]);
+  const [data, setData] = useState([]);
   const [perms, setPerms] = useState([]);
 
   let navigate = useNavigate();
@@ -23,6 +24,7 @@ function Roles() {
       .get(`${Helpers.baseUrl}roles/all/${Helpers.authParentId}`, Helpers.headers)
       .then((response) => {
         setRoles(response.data.reverse());
+        setData(response.data);
       })
       .catch((error) => {
         Helpers.unauthenticated(error, navigate);
@@ -40,6 +42,7 @@ function Roles() {
   useEffect(() => {
     getRoles();
     setPerms(permissions);
+    // eslint-disable-next-line
   }, []);
 
   return (
@@ -50,21 +53,7 @@ function Roles() {
                 <div className="col-8">
                     <div className="card">
                         <div className="card-body border-bottom">
-                            <div className="row" style={{ justifyContent: "center", alignItems: "center" }}>
-                                <div className="col-9">
-                                    <h3>
-                                        <img src="/images/icons/roles.png" alt="home" style={{height:30, marginRight:10}} /> All Roles
-                                    </h3>
-                                </div>
-                                <div className="col-3">
-                                    <label>Search</label>
-                                    <input
-                                    className="form-control"
-                                    value={search}
-                                    onChange={(e) => setSearch(e.target.value)}
-                                    />
-                                </div>
-                            </div>
+                            <CardHeader title={"Roles & Permissions"} setState={setRoles} data={data} fields={["name"]} />
                             <DataTable
                                 columns={[
                                     "Sr. #",
@@ -103,7 +92,7 @@ function Roles() {
                     </div>
                 </div>
                 <div className="col-4">
-                    {(parseInt(perms.can_create) === 1 || Helpers.authUser.user_role == null || (parseInt(perms.can_update) === 1 && isEditing)) && <AddRole getRoles={getRoles} ref={addRoleRef} />}
+                    {(parseInt(perms.can_create) === 1 || Helpers.authUser.user_role == null || (parseInt(perms.can_update) === 1)) && <AddRole getRoles={getRoles} ref={addRoleRef} />}
                 </div>
             </div>
         </div>

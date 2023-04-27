@@ -1,8 +1,10 @@
 import PageTitle from "../Components/PageTitle";
 import ProfileInfo from "../Includes/Profile/ProfileInfo";
 import PasswordUpdate from "../Includes/Profile/PasswordUpdate";
+import { useTitle } from "../Hooks/useTitle";
 
 function ProfileSettings() {
+    useTitle("Profile Settings");
   return (
     <div className="page-content">
         <div className="container-fluid">

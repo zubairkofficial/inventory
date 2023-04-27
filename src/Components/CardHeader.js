@@ -3,7 +3,7 @@ import Helpers from "../Config/Helpers";
 import IconButton from "./IconButton";
 import Input from "./Input";
 
-export default function CardHeader({ setState, data, fields }){
+export default function CardHeader({ setState, title, data, fields }){
     const [query, setQuery] = useState('');
     const handleSearch = e => {
         e.preventDefault();
@@ -17,7 +17,7 @@ export default function CardHeader({ setState, data, fields }){
     return (
         <div className="row" style={{ justifyContent: "center", alignItems: "center" }}>
             <div className="col-7">
-                <h3>All Customers</h3>
+                <h3>{title}</h3>
             </div>
             <div className="col-5">
                 <form>

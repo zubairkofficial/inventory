@@ -6,6 +6,7 @@ import Helpers from "../../Config/Helpers";
 import PageTitle from "../../Components/PageTitle";
 import Button from "../../Components/Button";
 import TabPermission from "../../Includes/Roles/TabPermission";
+import { useTitle } from "../../Hooks/useTitle";
 
 function Permissions() {
   let checkedInit = {
@@ -16,7 +17,7 @@ function Permissions() {
   const [checked, setChecked] = useState(checkedInit);
   const [tabs, setTabs] = useState([]);
   const {role_id, role_name} = useParams();
-
+  useTitle(`${role_name} Permissions`);
   let navigate = useNavigate();
   const getPermissions = () => {
     axios.get(`${Helpers.baseUrl}permissions/get-permissions/${role_id}`, Helpers.headers).then((response) => {
@@ -116,6 +117,7 @@ function Permissions() {
   useEffect(() => {
     getTabs();
     getPermissions();
+    // eslint-disable-next-line
   }, []);
 
   return (

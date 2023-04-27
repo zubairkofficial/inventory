@@ -8,17 +8,14 @@ import { usePermissions } from "../Hooks/usePermissions";
 import AddCustomer from "../Includes/Customer/AddCustomer";
 import ActionButton from "../Components/ActionButton";
 import CardHeader from "../Components/CardHeader";
-import Button from "../Components/Button";
 
 export default function Customers(){
     const permissions = usePermissions();
     const addCustomerRef = useRef(null);
-    
-    const [search, setSearch] = useState("");
+
     const [customers, setCustomers] = useState([]);
     const [data, setData] = useState([]);
     const [perms, setPerms] = useState([]);
-    const [isEditing, setIsEditing] = useState(false);
     
     let navigate = useNavigate();
 
@@ -37,6 +34,7 @@ export default function Customers(){
     useEffect(() => {
         getCustomers();
         setPerms(permissions);
+        // eslint-disable-next-line
     }, []);
 
     const hanldeEdit = (customerToEdit) => {
@@ -55,7 +53,7 @@ export default function Customers(){
                     <div className="col-8">
                         <div className="card">
                             <div className="card-body border-bottom">
-                                <CardHeader setState={setCustomers} data={data} fields={["name", "phone"]} />
+                                <CardHeader title={"All Customers"} setState={setCustomers} data={data} fields={["name", "phone"]} />
                                 <DataTable
                                 columns={[
                                     "Sr. #",
@@ -104,7 +102,7 @@ export default function Customers(){
                         </div>
                     </div>
                     <div className="col-4">
-                        {Helpers.authUser.user_role == null || parseInt(perms.can_create) === 1 || (parseInt(perms.can_update) === 1 && isEditing) ? 
+                        {Helpers.authUser.user_role == null || parseInt(perms.can_create) === 1 || (parseInt(perms.can_update) === 1) ? 
                             <AddCustomer allCustomers={getCustomers} ref={addCustomerRef} />
                         : null}
                     </div>
