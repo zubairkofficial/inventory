@@ -92,7 +92,7 @@ function Roles() {
                     </div>
                 </div>
                 <div className="col-4">
-                    {(parseInt(perms.can_create) === 1 || Helpers.authUser.user_role == null || (parseInt(perms.can_update) === 1)) && <AddRole getRoles={getRoles} ref={addRoleRef} />}
+                    {(perms.can_create === 1 || Helpers.authUser.user_role == null || (parseInt(perms.can_update) === 1)) && <AddRole getRoles={getRoles} ref={addRoleRef} />}
                 </div>
             </div>
         </div>

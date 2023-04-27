@@ -11,7 +11,8 @@ const usePermissions = () => {
             const perm = permissions.find(permission => permission.tab_link === link);
             setPerms(perm);
         }
-    }, [perms]);
+        // eslint-disable-next-line
+    }, []);
 
     return perms;
 }

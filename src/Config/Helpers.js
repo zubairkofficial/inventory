@@ -11,7 +11,7 @@ class Helpers{
     // static baseUrl = "http://3.80.216.93:3000/";
     static authUser = JSON.parse(localStorage.getItem('user'));
     
-    static authParentId = this.authUser == null ? '' : parseInt(this.authUser.parent_id) === 0 ? this.authUser._id : parseInt(this.authUser.parent_id);
+    static authParentId = this.authUser == null ? '' : this.authUser.parent_id === 0 ? this.authUser._id : this.authUser.parent_id;
     static headers = {
         headers:{
             'Content-Type': 'application/json',
@@ -119,6 +119,7 @@ class Helpers{
 
     static search = (query, data, fields) => {
         if(query){
+            // eslint-disable-next-line
             let filteredData = data.filter(row => {
                 for(let i = 0; i < fields.length; i++){
                     let field = fields[i];

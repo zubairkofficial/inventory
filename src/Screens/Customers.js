@@ -102,7 +102,7 @@ export default function Customers(){
                         </div>
                     </div>
                     <div className="col-4">
-                        {Helpers.authUser.user_role == null || parseInt(perms.can_create) === 1 || (parseInt(perms.can_update) === 1) ? 
+                        {Helpers.authUser.user_role == null || perms.can_create === 1 || (parseInt(perms.can_update) === 1) ? 
                             <AddCustomer allCustomers={getCustomers} ref={addCustomerRef} />
                         : null}
                     </div>

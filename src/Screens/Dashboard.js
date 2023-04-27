@@ -35,6 +35,7 @@ export default function Home(){
 
     useEffect(() => {
         getData();
+        // eslint-disable-next-line
     }, []);
 
     return (

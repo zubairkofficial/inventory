@@ -105,8 +105,7 @@ function Navbar() {
                 <span data-key="t-menu">Menu</span>
               </li>
               {tabs.map(tab => {
-                if (canSee) {
-                  return (
+                return canSee(tab.tab_link) ? (
                     <li className="nav-item" key={tab._id}>
                       <Link className="nav-link menu-link" to={tab.tab_link}>
                         <img
@@ -117,10 +116,7 @@ function Navbar() {
                         <span data-key="t-widgets">{tab.tab_name}</span>
                       </Link>
                     </li>
-                  );
-                }else{
-                    return null;
-                }
+                  ) : null;
               })}
               <NavLink icon="profile.png" link="/user/profile-settings" text="Profile Settings" />
               <li className="nav-item">

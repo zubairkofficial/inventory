@@ -13,6 +13,7 @@ import ActionButton from "../Components/ActionButton";
 function Team() {
     const addTeamMemberRef = useRef(null);
     const permissions = usePermissions();
+    console.log(permissions);
     useTitle("Team Management");
 
     const [teams, setTeams] = useState([]);
@@ -22,9 +23,7 @@ function Team() {
 
     let navigate = useNavigate();
     const getTeams = () => {
-        axios
-        .get(`${Helpers.baseUrl}teams/${Helpers.authParentId}`, Helpers.headers)
-        .then((response) => {
+        axios.get(`${Helpers.baseUrl}teams/${Helpers.authParentId}`, Helpers.headers).then((response) => {
             setTeams(response.data.reverse());
             setData(response.data);
         })
@@ -91,7 +90,7 @@ function Team() {
           </div>
           <div className="col-4">
             {
-              (parseInt(perms.can_create) === 1 || Helpers.authUser.user_role == null || (parseInt(perms.can_update) === 1)) &&
+              (perms.can_create === 1 || Helpers.authUser.user_role == null || (parseInt(perms.can_update) === 1)) &&
                <AddTeamMember getTeams={getTeams} ref={addTeamMemberRef} />
             }
           </div>
