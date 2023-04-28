@@ -8,6 +8,7 @@ import ProfileSettings from "./Screens/ProfileSettings";
 import Roles from "./Screens/Roles/Roles";
 import Permissions from "./Screens/Roles/Permissions";
 import Team from "./Screens/Team";
+import Employees from "./Screens/Employess";
 
 function Auth({children}){
   let user = localStorage.getItem('user');
@@ -42,6 +43,7 @@ function App() {
           <Route path="/user/roles" element={<Auth><Roles /></Auth>} />
           <Route path="/user/manage-permissions/:role_name/:role_id" element={<Auth><Permissions /></Auth>} />
           <Route path="/user/teams" element={<Auth><Team /></Auth>} />
+          <Route path="/user/employees" element={<Auth><Employees /></Auth>} />
         </Route>
       </Routes>
     </BrowserRouter>
