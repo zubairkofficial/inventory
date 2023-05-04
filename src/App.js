@@ -9,6 +9,10 @@ import Roles from "./Screens/Roles/Roles";
 import Permissions from "./Screens/Roles/Permissions";
 import Team from "./Screens/Team";
 import Employees from "./Screens/Employess";
+import Vehicles from "./Screens/Vehicles";
+import Services from "./Screens/Services";
+import Tires from './Screens/Tires';
+import Oils from "./Screens/Oils";
 
 function Auth({children}){
   let user = localStorage.getItem('user');
@@ -38,7 +42,11 @@ function App() {
         <Route index element={<AfterAuth><Login/></AfterAuth>} />
         <Route path="/user" element={<Layout/>}>
           <Route path="/user/dashboard" element={<Auth><Home/></Auth>} />
+          <Route path='/user/services' element={<Auth><Services/></Auth>}></Route>
+          <Route path='/user/tires' element={<Auth><Tires /></Auth>}></Route>
+          <Route path='/user/oils' element={<Auth><Oils /></Auth>}></Route>
           <Route path="/user/customers" element={<Auth><Customers/></Auth>} />
+          <Route path="/user/vehicles" element={<Auth><Vehicles/></Auth>} />
           <Route path="/user/profile-settings" element={<Auth><ProfileSettings /></Auth>} />
           <Route path="/user/roles" element={<Auth><Roles /></Auth>} />
           <Route path="/user/manage-permissions/:role_name/:role_id" element={<Auth><Permissions /></Auth>} />

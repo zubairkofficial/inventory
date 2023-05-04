@@ -8,10 +8,12 @@ import { usePermissions } from "../Hooks/usePermissions";
 import AddCustomer from "../Includes/Customer/AddCustomer";
 import ActionButton from "../Components/ActionButton";
 import CardHeader from "../Components/CardHeader";
+import { useTitle } from "../Hooks/useTitle";
 
 export default function Customers(){
     const permissions = usePermissions();
     const addCustomerRef = useRef(null);
+    useTitle("Customers");
 
     const [customers, setCustomers] = useState([]);
     const [data, setData] = useState([]);

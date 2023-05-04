@@ -7,7 +7,7 @@ export default function SelectInput({ label, value, onChange, placeholder, optio
                 onChange={onChange}
                 value={value}
             >
-                <option value={""} disabled>{placeholder}</option>
+                <option value={""} selected disabled>{placeholder}</option>
                 {options.map((option) => {
                     return <option key={option} value={option}>{option}</option>;
                 })}

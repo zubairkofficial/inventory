@@ -11,7 +11,7 @@ class Helpers{
     // static baseUrl = "http://3.80.216.93:3000/";
     static authUser = JSON.parse(localStorage.getItem('user'));
     
-    static authParentId = this.authUser == null ? '' : this.authUser.parent_id === 0 ? this.authUser._id : this.authUser.parent_id;
+    static authParentId = this.authUser == null ? '' : parseInt(this.authUser.parent_id) === 0 ? this.authUser._id : this.authUser.parent_id;
     static headers = {
         headers:{
             'Content-Type': 'application/json',
@@ -123,9 +123,26 @@ class Helpers{
             let filteredData = data.filter(row => {
                 for(let i = 0; i < fields.length; i++){
                     let field = fields[i];
-                    if(row[field].toLowerCase().includes(query.toLowerCase())){
-                        return row;
+                    if(isNaN(query) && isNaN(row[field])){
+                        if(row[field].toLowerCase().includes(query.toLowerCase())){
+                            return row;
+                        }
+                    }else if(!isNaN(query) && !isNaN(row[field])){
+                        if(row[field] == query){
+                            return row;
+                        }
                     }
+                    // if(!isNaN(query)){
+                    //     if(row[field].includes(query)){
+                    //         return row;
+                    //     }
+                    //     console.log("Not number", row[field]);
+                    // }else{
+                    //     if(row[field].toLowerCase().includes(query.toLowerCase())){
+                    //         return row;
+                    //     }
+                    //     console.log("number", row[field]);
+                    // }
                 }
             });
             return filteredData;
