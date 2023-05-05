@@ -9,6 +9,17 @@ export default function CardHeader({ setState, title, data, fields }){
         e.preventDefault();
         setState(Helpers.search(query, data, fields))
     }
+    const onInputSearch = inputQuery => {
+        setState(Helpers.search(inputQuery, data, fields))
+    }
+    const handleSearchChange = e => {
+        if(e.target.value === ''){
+            setState(data);
+        }else{
+            onInputSearch(e.target.value);
+        }
+        setQuery(e.target.value);
+    }
     const cancelSearch = e => {
         e.preventDefault();
         setState(data);
@@ -23,7 +34,7 @@ export default function CardHeader({ setState, title, data, fields }){
                 <form>
                     <div className="row">
                         <div className="col-8">
-                            <Input value={query} placeholder={"Seach here..."} onChange={e => setQuery(e.target.value)} />
+                            <Input value={query} placeholder={"Seach here..."} onChange={handleSearchChange} />
                         </div>
                         <div className={ query ? "col-2" : "col-4" }>
                             <IconButton icon={"search-outline"} text={query ? null : "Search"} color={"success"} onClick={handleSearch} topMartgin={false} />

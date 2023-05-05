@@ -4,10 +4,8 @@ import Helpers from "../../Config/Helpers";
 import Button from "../../Components/Button";
 import axios from "axios";
 import ReactSelect from "../../Components/ReactSelect";
-import { useNavigate } from "react-router-dom";
 
 const AddVehicle = forwardRef(({ getVehicles }, ref) => {
-    let navigate = useNavigate();
 
     let vehicleInit = {
         company: "",
@@ -28,6 +26,7 @@ const AddVehicle = forwardRef(({ getVehicles }, ref) => {
     const handleSaveVehicle = (e) => {
         e.preventDefault();
         setIsLoading(true);
+        setErrors({});
         const addOrUpdate = isEditing ? "update" : "add";
         axios
           .post(
@@ -101,7 +100,7 @@ const AddVehicle = forwardRef(({ getVehicles }, ref) => {
                 </h5>
             </div>
             <div className="card-body border-bottom">
-                <ReactSelect label={"Select Customer"} options={customerOptions} value={selectedCustomer} onChange={handleSelectCustomer} />
+                <ReactSelect label={"Select Customer"} error={errors.customer} options={customerOptions} value={selectedCustomer} onChange={handleSelectCustomer} />
                 <Input label={"VIN Number"} value={vehicle.vin_number} placeholder={"VIN Number"} error={errors.vin_number} onChange={e => {
                     setVehicle({ ...vehicle, vin_number: e.target.value })
                 }} />

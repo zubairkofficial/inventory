@@ -6,13 +6,18 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import SelectInput from "../../Components/SelectInput";
 
-const options =  ['Taxable', 'Non Taxable'];
+const options =  [
+  {label:"Choose Tax Option", value:'', is_disabled: true},
+  {label:"Taxable", value:'Taxable', is_disabled: false},
+  {label:"Non Taxable", value:'Non Taxable', is_disabled: false},
+];
 const AddService = forwardRef(({ getServices }, ref) => {
     let navigate = useNavigate();
     let serviceInit = {
         service_name: "",
         description: "",
         price: "",
+        tax:"",
         user_id:Helpers.authParentId,
     };
     const [service, setService] = useState(serviceInit);

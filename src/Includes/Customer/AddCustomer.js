@@ -16,7 +16,11 @@ const AddCustomer = forwardRef(({ allCustomers }, ref) => {
         taxValue:0,
         user_id:Helpers.authParentId,
     };
-    let options = ["Taxable", "Non Taxable"];
+    const options =  [
+        {label:"Choose Tax Option", value:'', is_disabled: true},
+        {label:"Taxable", value:'Taxable', is_disabled: false},
+        {label:"Non Taxable", value:'Non Taxable', is_disabled: false},
+    ];
     const [customer, setCustomer] = useState(customerInit);
     const [errors, setErrors] = useState({});
     const [isEditing, setIsEditing] = useState(false);
@@ -78,7 +82,7 @@ const AddCustomer = forwardRef(({ allCustomers }, ref) => {
                 <Input label={"Address"} value={customer.address} placeholder={"Address"} error={errors.address} onChange={e => {
                     setCustomer({ ...customer, address: e.target.value })
                 }} />
-                <SelectInput label={"Tax Status"} value={customer.tax} placeholder={"Choose Tax Option"} error={errors.tax} options={options} onChange={e => {
+                <SelectInput label={"Tax Status"} value={customer.tax} error={errors.tax} options={options} onChange={e => {
                     setCustomer({ ...customer, tax: e.target.value });
                 }} />
                 <div className="row">

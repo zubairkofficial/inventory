@@ -1,4 +1,4 @@
-export default function SelectInput({ label, value, onChange, placeholder, options, error }){
+export default function SelectInput({ label, value, onChange, options, error }){
     return (
         <div className="form-group mb-3">
             <label>{label}</label>
@@ -7,9 +7,8 @@ export default function SelectInput({ label, value, onChange, placeholder, optio
                 onChange={onChange}
                 value={value}
             >
-                <option value={""} selected disabled>{placeholder}</option>
-                {options.map((option) => {
-                    return <option key={option} value={option}>{option}</option>;
+                {options.map((option, index) => {
+                    return <option key={index} value={option.value} disabled={option.is_disabled}>{option.label}</option>;
                 })}
             </select>
             <small className="text-danger">

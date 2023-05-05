@@ -54,7 +54,7 @@ function Team() {
           <div className="col-8">
             <div className="card">
               <div className="card-body border-bottom">
-                <CardHeader title={"Team Management"} data={data} fields={["name", "email"]} setState={setTeams} />
+                <CardHeader title={"Team Management"} data={data} fields={["name", "email", "user_role.name"]} setState={setTeams} />
                 <DataTable
                   columns={["Sr. #", "Name", "Email", "Role", "Actions"]}
                 >

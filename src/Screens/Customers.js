@@ -55,7 +55,7 @@ export default function Customers(){
                     <div className="col-8">
                         <div className="card">
                             <div className="card-body border-bottom">
-                                <CardHeader title={"All Customers"} setState={setCustomers} data={data} fields={["name", "phone"]} />
+                                <CardHeader title={"All Customers"} setState={setCustomers} data={data} fields={["name", "company_name", "phone", "email", "address"]} />
                                 <DataTable
                                 columns={[
                                     "Sr. #",

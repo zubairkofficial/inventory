@@ -7,9 +7,10 @@ import "izitoast-react/dist/iziToast.css";
 import PageTitle from "../Components/PageTitle";
 import CardHeader from "../Components/CardHeader";
 import AddOil from "../Includes/Oils/AddOil";
+import { usePermissions } from "../Hooks/usePermissions";
 
 function Oils() {
-  const current_url = useLocation();
+  const permissions = usePermissions();
   const [oils, setOils] = useState([]);
   const [perms, setPerms] = useState([]);
   const [data, setData] = useState([]);
@@ -35,17 +36,9 @@ function Oils() {
   const handleDelete = (oilId) => {
     Helpers.confirmBox(`${Helpers.baseUrl}oils/delete/${oilId}`, navigate, getOils);
   };
-  const getPerms = () => {
-    const link = current_url.pathname;
-    const permissions = JSON.parse(localStorage.getItem('permissions'));
-    if (permissions) {
-      const perm = permissions.find(permission => permission.tab_link === link);
-      setPerms(perm);
-    }
-  }
   useEffect(() => {
     getOils();
-    getPerms();
+    setPerms(permissions);
   }, []);
 
   return (

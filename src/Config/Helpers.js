@@ -123,26 +123,30 @@ class Helpers{
             let filteredData = data.filter(row => {
                 for(let i = 0; i < fields.length; i++){
                     let field = fields[i];
-                    if(isNaN(query) && isNaN(row[field])){
-                        if(row[field].toLowerCase().includes(query.toLowerCase())){
-                            return row;
+                    if(field.includes(".")){
+                        let keyvalue = field.split(".");
+                        let key = keyvalue[0];
+                        let value = keyvalue[1];
+                        if(isNaN(query) && isNaN(row[key][value])){
+                            if(row[key][value].toLowerCase().includes(query.toLowerCase())){
+                                return row;
+                            }
+                        }else if(!isNaN(query) && !isNaN(row[key][value])){
+                            if(row[key][value].toString().includes(query)){
+                                return row;
+                            }
                         }
-                    }else if(!isNaN(query) && !isNaN(row[field])){
-                        if(row[field] == query){
-                            return row;
+                    }else{
+                        if(isNaN(query) && isNaN(row[field])){
+                            if(row[field].toLowerCase().includes(query.toLowerCase())){
+                                return row;
+                            }
+                        }else if(!isNaN(query) && !isNaN(row[field])){
+                            if(row[field].toString().includes(query)){
+                                return row;
+                            }
                         }
                     }
-                    // if(!isNaN(query)){
-                    //     if(row[field].includes(query)){
-                    //         return row;
-                    //     }
-                    //     console.log("Not number", row[field]);
-                    // }else{
-                    //     if(row[field].toLowerCase().includes(query.toLowerCase())){
-                    //         return row;
-                    //     }
-                    //     console.log("number", row[field]);
-                    // }
                 }
             });
             return filteredData;

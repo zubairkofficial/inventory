@@ -13,15 +13,16 @@ function Vehicles() {
   
     const addVehicleRef = useRef(null);
     const permissions = usePermissions();
-  const [vehicles, setVehicles] = useState([]);
-  const [data, setData] = useState([]);
-  const [perms, setPerms] = useState([]);
+    const [vehicles, setVehicles] = useState([]);
+    const [data, setData] = useState([]);
+    const [perms, setPerms] = useState([]);
 
   let navigate = useNavigate();
   const getVehicles = () => {
     axios
       .get(`${Helpers.baseUrl}vehicles/all/${Helpers.authParentId}`, Helpers.headers)
       .then((response) => {
+        console.log(response.data);
         setVehicles(response.data.reverse());
         setData(response.data);
       })
@@ -52,7 +53,7 @@ function Vehicles() {
           <div className="col-8">
             <div className="card">
               <div className="card-body border-bottom">
-                <CardHeader setState={setVehicles} title={"All Vehicles"} data={data} fields={["name", "model", "vin_number", "year"]} />
+                <CardHeader setState={setVehicles} title={"All Vehicles"} data={data} fields={["name", "model", "vin_number", "year", "customer.name"]} />
                 <DataTable
                   columns={[
                     "Sr. #",
