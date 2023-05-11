@@ -9,6 +9,7 @@ import AddCustomer from "../Includes/Customer/AddCustomer";
 import ActionButton from "../Components/ActionButton";
 import CardHeader from "../Components/CardHeader";
 import { useTitle } from "../Hooks/useTitle";
+import AddTax from "../Includes/Customer/AddTax";
 
 export default function Customers(){
     const permissions = usePermissions();
@@ -18,7 +19,7 @@ export default function Customers(){
     const [customers, setCustomers] = useState([]);
     const [data, setData] = useState([]);
     const [perms, setPerms] = useState([]);
-    
+
     let navigate = useNavigate();
 
     const getCustomers = () => {
@@ -64,6 +65,7 @@ export default function Customers(){
                                     "Email",
                                     "Phone",
                                     "Address",
+                                    "Taxable",
                                     "Actions",
                                 ]}
                                 >
@@ -76,6 +78,7 @@ export default function Customers(){
                                         <td>{customer.email}</td>
                                         <td>{customer.phone}</td>
                                         <td>{customer.address}</td>
+                                        <td>{customer.tax}</td>
                                         <td>
                                             <Link
                                                 to={`/user/receipts/customer/${customer.name}/${customer._id}`}
@@ -105,7 +108,10 @@ export default function Customers(){
                     </div>
                     <div className="col-4">
                         {Helpers.authUser.user_role == null || perms.can_create === 1 || (parseInt(perms.can_update) === 1) ? 
-                            <AddCustomer allCustomers={getCustomers} ref={addCustomerRef} />
+                            <>
+                                <AddCustomer allCustomers={getCustomers} ref={addCustomerRef} />
+                                <AddTax />
+                            </>
                         : null}
                     </div>
                 </div>

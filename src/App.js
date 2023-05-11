@@ -13,6 +13,7 @@ import Vehicles from "./Screens/Vehicles";
 import Services from "./Screens/Services";
 import Tires from './Screens/Tires';
 import Oils from "./Screens/Oils";
+import AddReceipt from "./Screens/Receipt/AddReceipt";
 
 function Auth({children}){
   let user = localStorage.getItem('user');
@@ -47,6 +48,7 @@ function App() {
           <Route path='/user/oils' element={<Auth><Oils /></Auth>}></Route>
           <Route path="/user/customers" element={<Auth><Customers/></Auth>} />
           <Route path="/user/vehicles" element={<Auth><Vehicles/></Auth>} />
+          <Route path='/user/receipts/add' element={<Auth><AddReceipt /></Auth>}></Route>
           <Route path="/user/profile-settings" element={<Auth><ProfileSettings /></Auth>} />
           <Route path="/user/roles" element={<Auth><Roles /></Auth>} />
           <Route path="/user/manage-permissions/:role_name/:role_id" element={<Auth><Permissions /></Auth>} />

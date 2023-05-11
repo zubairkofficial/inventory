@@ -28,25 +28,18 @@ const AddVehicle = forwardRef(({ getVehicles }, ref) => {
         setIsLoading(true);
         setErrors({});
         const addOrUpdate = isEditing ? "update" : "add";
-        axios
-          .post(
-            `${Helpers.baseUrl}vehicles/${addOrUpdate}`,
-            vehicle,
-            Helpers.headers
-          )
-          .then((response) => {
+        axios.post(`${Helpers.baseUrl}vehicles/${addOrUpdate}`, vehicle, Helpers.headers).then((response) => {
             getVehicles();
             setVehicle(vehicleInit);
             setSelectedCustomer('');
             setIsEditing(false);
             Helpers.toast("success", "Vehicle saved successfully");
             setIsLoading(false);
-          })
-          .catch((error) => {
+        }).catch((error) => {
             setErrors(Helpers.error_response(error));
             setIsLoading(false);
-          });
-      };
+        });
+    };
 
       const getCustomers = () => {
         axios
