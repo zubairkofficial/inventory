@@ -4,7 +4,7 @@ import Input from "../Input";
 import Button from "../Button";
 import $ from 'jquery'
 
-const SelectedService = ({ lastService, modalState, showModal, setSelectedServices, selectedServices, setLastSelectedService }) => {
+const SelectedService = ({ lastService, modalState, showModal, setSelectedServices, selectedServices, setLastSelectedService, calculateTotalServices }) => {
     const [service, setService] = useState({});
     const handleQty = e => {
         let inputValue = e.target.value;
@@ -27,6 +27,7 @@ const SelectedService = ({ lastService, modalState, showModal, setSelectedServic
         selectedServices[selectedServices.length - 1].label = `${service.name} ($${service.price})`;
         setLastSelectedService(null);
         setSelectedServices(selectedServices);
+        calculateTotalServices();
         setService({});
         modalState(false);
         $('.modal-backdrop').hide();

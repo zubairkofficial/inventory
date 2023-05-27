@@ -92,11 +92,29 @@ export default function AddReceipt(){
     }
 
     const handleServicesChange = selected => {
+        if(selected.length === 0){
+            setReceipt({...receipt, totalPrice: 0, remaining: 0, tax: 0});
+        }
         if(receipt.vehicle){
             let previousLength = selectedServices.length;
             setSelectedServices(selected);
-            let prices = 0;
-            let taxPrice = 0;
+            calculateTotalServices();
+            setReceipt({...receipt, services: selected});
+            if(selected.length > 0 && selected.length > previousLength){
+                setLastSelectedService(selected[selected.length - 1]);
+                setShowServiceModal(true);
+            }
+        }else{
+            Helpers.toast("error", "Select a vehicle to add service")
+        }
+    }
+
+    const calculateTotalServices = () => {
+        let prices = 0;
+        let taxPrice = 0;
+        if(selectedServices.length === 0){
+            setReceipt({...receipt, totalPrice: 0, remaining: 0, tax: 0});
+        }else{
             for(let i = 0; i < selectedServices.length; i++){
                 if(selectedServices[i].value.tax === "Taxable"){
                     taxPrice += parseFloat(selectedServices[i].value.total_price);
@@ -113,13 +131,7 @@ export default function AddReceipt(){
             }
             let paid = parseFloat(receipt.paid).toFixed(2);
             let remaining = total - paid;
-            setReceipt({...receipt, totalPrice: total, remaining: remaining, tax: TAX, services: selected});
-            if(selected.length > 0 && selected.length > previousLength){
-                setLastSelectedService(selected[selected.length - 1]);
-                setShowServiceModal(true);
-            }
-        }else{
-            Helpers.toast("error", "Select a vehicle to add service")
+            setReceipt({...receipt, totalPrice: total, remaining: remaining, tax: TAX});
         }
     }
 
@@ -205,10 +217,11 @@ export default function AddReceipt(){
                                                             <h6><strong>Make Year: </strong>{ receipt.vehicle && receipt.vehicle.year }</h6>
                                                         </div>
                                                     </div>
+                                                    {"Total Length" + receipt.services.length}
                                                     <div className="row" style={{ marginTop: 20 }}>
                                                         <div className="col-12">
                                                             <table className="table">
-                                                                {receipt.services && (
+                                                                {(receipt.services || receipt.services.length > 0) && (
                                                                     <thead>
                                                                         <tr>
                                                                             <th>Service</th>
@@ -236,6 +249,14 @@ export default function AddReceipt(){
                                                                         <td>${service.value.total_price}</td>
                                                                     </tr>
                                                                 ))}
+                                                                    {(receipt.services || receipt.services.length > 0) && 
+                                                                        <tr>
+                                                                            <th>Total Price</th>
+                                                                            <th></th>
+                                                                            <th></th>
+                                                                            <th>${receipt.totalPrice}</th>
+                                                                        </tr>
+                                                                    }
                                                                 </tbody>
                                                             </table>
                                                         </div>
@@ -251,7 +272,7 @@ export default function AddReceipt(){
                 </div>
                 <AddCustomer showModal={showCustomerModal} modalState={setShowCustomerModal} handleCustomerChange={handleCustomerChange} setCustomersOptions={setCustomersOptions} />
                 <AddVehicleReceipt showModal={showVehilcleModal} modalState={setShowVehilcleModal} customer={selectedCustomer} handleVehicleChange={handleVehicleChange} setVehiclesOptions={setVehiclesOptions} />
-                {lastSelectedService && <SelectedService showModal={showServiceModal} modalState={setShowServiceModal} lastService={lastSelectedService} setSelectedServices={setSelectedServices} selectedServices={selectedServices} setLastSelectedService={setLastSelectedService} />}
+                {lastSelectedService && <SelectedService showModal={showServiceModal} modalState={setShowServiceModal} lastService={lastSelectedService} setSelectedServices={setSelectedServices} selectedServices={selectedServices} setLastSelectedService={setLastSelectedService} calculateTotalServices={calculateTotalServices} />}
             </div>
         </div>
     );
