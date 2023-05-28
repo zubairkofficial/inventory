@@ -27,8 +27,8 @@ export const customerReducer = (state, action) => {
             }
         });
     }
+    const tireOptions = [];
     const getTires = () => {
-        const options = [];
         axios.get(`${Helpers.baseUrl}tires/all/${Helpers.authParentId}`, Helpers.headers).then((response) => {
             let resData = response.data.reverse();
             for (let index = 0; index < resData.length; index++) {
@@ -57,10 +57,10 @@ export const customerReducer = (state, action) => {
                         isDisabled: false,
                     };
                 }
-                options.push(tireOption);
+                tireOptions.push(tireOption);
             }
         });
-        return options;
+        // return options;
     }
     const getOils = () => {
         axios.get(`${Helpers.baseUrl}oils/all/${Helpers.authParentId}`, Helpers.headers).then((response) => {
@@ -122,6 +122,25 @@ export const customerReducer = (state, action) => {
         case 'getTax':
             axios.get(`${Helpers.baseUrl}customers/get-tax/${Helpers.authParentId}`,Helpers.headers).then((response) => {
                 action.states.setTaxValue(response.data);
+            });
+            break;
+        case 'getTires':
+            getTires();
+            action.states.setTireOptions(tireOptions);
+            break;
+        case 'getTechnicians':
+            axios.get(`${Helpers.baseUrl}employees/all/${Helpers.authParentId}`,Helpers.headers).then((response) => {
+                let techniciansArray = [];
+                let resData = response.data.reverse();
+                for (let index = 0; index < resData.length; index++) {
+                const object = {
+                    label:
+                    resData[index].name,
+                    value: resData[index],
+                };
+                techniciansArray.push(object);
+                }
+                action.states.setTechnicianOptions(techniciansArray);
             });
             break;
         default:

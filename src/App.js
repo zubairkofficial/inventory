@@ -13,7 +13,14 @@ import Vehicles from "./Screens/Vehicles";
 import Services from "./Screens/Services";
 import Tires from './Screens/Tires';
 import Oils from "./Screens/Oils";
+import Receipts from "./Screens/Receipt/Receipts";
+import TodayReceipts from "./Screens/Receipt/TodayReceipts";
+import UnpaidReceipts from "./Screens/Receipt/UnpaidReceipts";
 import AddReceipt from "./Screens/Receipt/AddReceipt";
+import ReceiptDetails from "./Screens/Receipt/ReceiptDetail";
+import MakePayment from "./Screens/Receipt/MakePayment";
+import Drafts from "./Screens/Receipt/Drafts";
+import EditDraft from "./Screens/Receipt/EditDraft";
 
 function Auth({children}){
   let user = localStorage.getItem('user');
@@ -48,7 +55,14 @@ function App() {
           <Route path='/user/oils' element={<Auth><Oils /></Auth>}></Route>
           <Route path="/user/customers" element={<Auth><Customers/></Auth>} />
           <Route path="/user/vehicles" element={<Auth><Vehicles/></Auth>} />
+          <Route path='/user/receipts' element={<Auth><Receipts /></Auth>}></Route>
+          <Route path='/user/receipts/today' element={<Auth><TodayReceipts /></Auth>}></Route>
+          <Route path='/user/receipts/unpaid' element={<Auth><UnpaidReceipts /></Auth>}></Route>
           <Route path='/user/receipts/add' element={<Auth><AddReceipt /></Auth>}></Route>
+          <Route path='/user/receipts/receipt-details/:receipt_id' element={<Auth><ReceiptDetails /></Auth>}></Route>
+          <Route path='/user/unpaid-receipt/make-payment/:receipt_id' element={<Auth><MakePayment /></Auth>}></Route>
+          <Route path='/user/drafts' element={<Auth><Drafts /></Auth>}></Route>
+          <Route path='/user/receipts/drafts-edit/:receipt_id' element={<Auth><EditDraft /></Auth>}></Route>
           <Route path="/user/profile-settings" element={<Auth><ProfileSettings /></Auth>} />
           <Route path="/user/roles" element={<Auth><Roles /></Auth>} />
           <Route path="/user/manage-permissions/:role_name/:role_id" element={<Auth><Permissions /></Auth>} />

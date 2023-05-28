@@ -1,4 +1,4 @@
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import PageTitle from "../../Components/PageTitle";
 import Helpers from "../../Config/Helpers";
 import Input from "../../Components/Input";
@@ -12,7 +12,7 @@ import SelectedService from "../../Components/Receipt/SelectedService";
 import Button from "../../Components/Button";
 import axios from "axios";
 
-export default function AddReceipt() {
+export default function EditDraft() {
   let receiptInit = {
     date: new Date().toISOString().split("T")[0],
     customer: "",
@@ -45,6 +45,7 @@ export default function AddReceipt() {
   };
 
   let navigate = useNavigate();
+  const {receipt_id} = useParams();
 
   const [receiptRed, dispatch] = useReducer(customerReducer, receiptInit);
 
@@ -86,11 +87,70 @@ export default function AddReceipt() {
   const [taxValue, setTaxValue] = useState([]);
   //Button Loading
   const [btnLoading, setBtnLoading] = useState(false);
+  const [isEditing, setIsEditing] = useState(true);
+  const [sendRequest, setSendRequest] = useState(false);
 
   // Modals State
   const [showCustomerModal, setShowCustomerModal] = useState(false);
   const [showVehilcleModal, setShowVehilcleModal] = useState(false);
   const [showServiceModal, setShowServiceModal] = useState(false);
+
+
+  const getReceipt = () => {
+    axios
+      .get(`${Helpers.baseUrl}receipts/details/${receipt_id}`, Helpers.headers)
+      .then((response) => {
+        const customer = {
+            label: response.data.customer.name + " ("+response.data.customer.phone + ")",
+            value: response.data.customer
+        };
+
+        const vehicle = {
+            label:response.data.vehicle.name +" "+ response.data.vehicle.model,
+            value:response.data.vehicle
+        };
+
+        const services = response.data.services;
+
+        const technician = {
+            label: response.data.technician.name,
+            value:response.data.technician,
+        };
+
+        const status = {
+            label: response.data.status,
+            value: response.data.status
+        };
+
+        const paymentType = {
+            label: response.data.paymentType,
+            value: response.data.paymentType,
+        };
+
+        const dateString = response.data.date; // your date string
+        const dateObj = new Date(dateString); // convert the string to a Date object
+
+        const year = dateObj.getFullYear(); // get the year (e.g. 2023)
+        const month = ("0" + (dateObj.getMonth() + 1)).slice(-2); // get the month (e.g. 04)
+        const day = ("0" + dateObj.getDate()).slice(-2); // get the day (e.g. 01)
+
+        const formattedDate = `${year}-${month}-${day}`;
+        response.data.date = formattedDate;
+        setReceipt(response.data);
+        
+        setSelectedCustomer(customer);
+        setSelectedVehicle(vehicle);
+        setSelectedTechnician(technician);
+        setSelectedStatus(status);
+        setSelectedPaymentType(paymentType);
+        setSelectedServices(services);
+        
+
+      })
+      .catch((error) => {
+        Helpers.unauthenticated(error, navigate);
+      });
+  };
 
   const handleCustomerChange = (selected) => {
     if (selected) {
@@ -279,15 +339,23 @@ export default function AddReceipt() {
 
   const handleSaveReceipt = (e) => {
     e.preventDefault();
-    setBtnLoading(true);
+    setSendRequest(true);
+    setReceipt({ ...receipt, isDraft: 0 });
+  };
 
-    // const addOrUpdate = isEditing ? "update" : "add";
-    axios
-      .post(`${Helpers.baseUrl}receipts/add`, receipt, Helpers.headers)
+  useEffect(() => {
+
+    if (sendRequest && (receipt.isDraft == 0 || receipt.isDraft == 1)) {
+      setBtnLoading(true);
+      const addOrUpdate = isEditing ? "update" : "add";
+      axios.post(
+        `${Helpers.baseUrl}receipts/${addOrUpdate}`,
+        receipt,
+        Helpers.headers
+      )
       .then((response) => {
-        setReceipt(receiptInit);
-        // setIsEditing(false);
-        Helpers.toast("success", "Receipt saved successfully");
+        setIsEditing(false);
+        Helpers.toast("success", "Receipt saved as Draft successfully");
         setBtnLoading(false);
         navigate("/user/receipts");
       })
@@ -295,29 +363,12 @@ export default function AddReceipt() {
         setErrors(Helpers.error_response(error));
         setBtnLoading(false);
       });
-  };
-
-  useEffect(() => {
-    if (receipt.isDraft) {
-      setBtnLoading(true);
-      //   const addOrUpdate = isEditing ? "update" : "add";
-      axios
-        .post(`${Helpers.baseUrl}receipts/add`, receipt, Helpers.headers)
-        .then((response) => {
-          // setIsEditing(false);
-          Helpers.toast("success", "Receipt saved as Draft successfully");
-          setBtnLoading(false);
-          navigate("/user/drafts");
-        })
-        .catch((error) => {
-          setErrors(Helpers.error_response(error));
-          setBtnLoading(false);
-        });
     }
-  }, [receipt.isDraft]);
+  }, [sendRequest]);
 
   const handleSaveDraft = (e) => {
     e.preventDefault();
+    setSendRequest(true);
     setReceipt({ ...receipt, isDraft: 1 });
   };
 
@@ -327,6 +378,7 @@ export default function AddReceipt() {
     dispatch({ type: "getTires", states: { setTireOptions } });
     dispatch({ type: "getTechnicians", states: { setTechnicianOptions } });
     dispatch({ type: "getTax", states: { setTaxValue } });
+    getReceipt();
   }, []);
 
   return (
@@ -480,6 +532,7 @@ export default function AddReceipt() {
                             onClick={(event) => {
                               event.preventDefault();
                               setReceipt(receiptInit);
+                              setIsEditing(false);
                             }}
                             // isLoading={btnLoading}
                           />

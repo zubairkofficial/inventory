@@ -1,0 +1,10 @@
+@media print{
+    @page {
+        size: auto;
+        margin: 0;
+    }
+
+    body{
+        margin: 0;
+    }
+}

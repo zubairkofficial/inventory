@@ -1,15 +1,14 @@
-export default function Input({ label, value, onChange, placeholder, error, type = "text", readOnly = false }){
+export default function TextInput({ label, value, onChange, placeholder, error, type = "text" }){
     return (
         <div className="mb-3">
             {label && <label htmlFor={label} className="form-label">{label}</label>}
-            <input
+            <textarea
                 type={type}
                 className="form-control"
                 value={value}
                 onChange={onChange}
                 placeholder={placeholder}
-                readOnly={readOnly}
-            />
+            ></textarea>
             <small className="text-danger">{ error ? error : '' }</small>
         </div>
     )

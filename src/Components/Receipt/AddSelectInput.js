@@ -1,6 +1,6 @@
 import Select from "react-select";
 
-const AddSelectInput = ({ label, options, selected, onChange, onInputChange, error, targetModal, onBtnClick, isMulti = false }) => {
+const AddSelectInput = ({ label, options, selected, onChange, onInputChange, error, targetModal, onBtnClick, isMulti = false, hasBtn = true }) => {
     const handleButtonClick = e => {
         e.preventDefault();
         onBtnClick();
@@ -23,17 +23,21 @@ const AddSelectInput = ({ label, options, selected, onChange, onInputChange, err
                 </small>
                 </div>
             </div>
-            <div className="col-1">
-                <button
-                    className="btn btn-light add-client-btn"
-                    // data-bs-toggle="modal"
-                    // data-bs-target={`#${targetModal}`}
-                    onClick={handleButtonClick}
-                    style={{ marginTop: 26 }}
-                >
-                    <span className="la la-plus"></span>
-                </button>
-            </div>
+            {
+                hasBtn === true ? (
+                    <div className="col-1">
+                        <button
+                            className="btn btn-light add-client-btn"
+                            // data-bs-toggle="modal"
+                            // data-bs-target={`#${targetModal}`}
+                            onClick={handleButtonClick}
+                            style={{ marginTop: 26 }}
+                        >
+                            <span className="la la-plus"></span>
+                        </button>
+                    </div> 
+                ) : ("")
+            }
         </div>
     );
 }
