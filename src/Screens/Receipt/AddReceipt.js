@@ -93,17 +93,18 @@ export default function AddReceipt() {
   const [showServiceModal, setShowServiceModal] = useState(false);
 
   const handleCustomerChange = (selected) => {
+    console.log(selected);
     if (selected) {
       setSelectedCustomer(selected);
-      if (selected.value.tax === "Taxable") {
+      // if (selected.value.tax === "Taxable") {
         // alert('it works')
         setReceipt({
           ...receipt,
           customer: selected ? selected.value : "",
           taxIncluded: true,
-          taxType: taxValue.tax,
+          taxType: selected.value.tax === "Taxable" ? taxValue.tax : "",
         });
-      }
+      // }
     } else {
       setSelectedCustomer(null);
       setReceipt({ ...receipt, customer: selected ? selected.value : "" });
@@ -301,18 +302,15 @@ export default function AddReceipt() {
     if (receipt.isDraft) {
       setBtnLoading(true);
       //   const addOrUpdate = isEditing ? "update" : "add";
-      axios
-        .post(`${Helpers.baseUrl}receipts/add`, receipt, Helpers.headers)
-        .then((response) => {
+      axios.post(`${Helpers.baseUrl}receipts/add`, receipt, Helpers.headers).then((response) => {
           // setIsEditing(false);
           Helpers.toast("success", "Receipt saved as Draft successfully");
           setBtnLoading(false);
           navigate("/user/drafts");
-        })
-        .catch((error) => {
+      }).catch((error) => {
           setErrors(Helpers.error_response(error));
           setBtnLoading(false);
-        });
+      });
     }
   }, [receipt.isDraft]);
 
@@ -386,7 +384,7 @@ export default function AddReceipt() {
                         label={"Select Service"}
                         options={serviceOptions}
                         selected={selectedServices}
-                        error={errors.service}
+                        error={errors.services}
                         onChange={handleServicesChange}
                         onBtnClick={() => {}}
                         targetModal={"addServiceModal"}

@@ -13,8 +13,10 @@ export default function Login(){
         password: "",
     });
     const [errors, setErrors] = useState({});
+    const [isLoading, setIsLoading] = useState(false);
     const hanldeLogin = async (e) => {
         e.preventDefault();
+        setIsLoading(true);
         axios.post(`${Helpers.baseUrl}users/login-user`, formData).then(response => {
             localStorage.setItem('user', JSON.stringify(response.data.user));
             localStorage.setItem('token', response.data.token);
@@ -22,8 +24,10 @@ export default function Login(){
             localStorage.setItem('permissions', JSON.stringify(response.data.permissions));
             Helpers.toast("success", "Logged In successfully");
             window.location.href = "/user/dashboard";
+            // setIsLoading(false);
         }).catch(error => {
             setErrors(Helpers.error_response(error));
+            setIsLoading(false);
         });
     };
     return (
@@ -65,7 +69,7 @@ export default function Login(){
                                 <Input label="Password" value={formData.password} type="password" placeholder="Enter Password" error={errors.password} onChange={e => {
                                     setFormData({ ...formData, password: e.target.value });
                                 }} />
-                                <Button text="Login" color="success" onClick={hanldeLogin} />
+                                <Button text={isLoading ? 'Please wait...' : 'Login' } isLoading={isLoading} color="success" onClick={hanldeLogin} />
                             </form>
                         </div>
                         </div>

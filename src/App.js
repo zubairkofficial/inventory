@@ -21,6 +21,11 @@ import ReceiptDetails from "./Screens/Receipt/ReceiptDetail";
 import MakePayment from "./Screens/Receipt/MakePayment";
 import Drafts from "./Screens/Receipt/Drafts";
 import EditDraft from "./Screens/Receipt/EditDraft";
+import DailyReports from "./Screens/Reports/Daily";
+import WeeklyReports from "./Screens/Reports/Weekly";
+import MonthlyReports from "./Screens/Reports/Monthly";
+import AnnuallyReports from "./Screens/Reports/Anually";
+import CustomerReceipts from "./Screens/Receipt/CustomerReceipts";
 
 function Auth({children}){
   let user = localStorage.getItem('user');
@@ -63,10 +68,15 @@ function App() {
           <Route path='/user/unpaid-receipt/make-payment/:receipt_id' element={<Auth><MakePayment /></Auth>}></Route>
           <Route path='/user/drafts' element={<Auth><Drafts /></Auth>}></Route>
           <Route path='/user/receipts/drafts-edit/:receipt_id' element={<Auth><EditDraft /></Auth>}></Route>
+          <Route path='/user/reports/daily' element={<Auth><DailyReports /></Auth>}></Route>
+          <Route path='/user/reports/weekly' element={<Auth><WeeklyReports /></Auth>}></Route>
+          <Route path='/user/reports/monthly' element={<Auth><MonthlyReports /></Auth>}></Route>
+          <Route path='/user/reports/annually' element={<Auth><AnnuallyReports /></Auth>}></Route>
           <Route path="/user/profile-settings" element={<Auth><ProfileSettings /></Auth>} />
           <Route path="/user/roles" element={<Auth><Roles /></Auth>} />
           <Route path="/user/manage-permissions/:role_name/:role_id" element={<Auth><Permissions /></Auth>} />
           <Route path="/user/teams" element={<Auth><Team /></Auth>} />
+          <Route path='/user/receipts/customer/:customer_name/:customer_id' element={<Auth><CustomerReceipts /></Auth>}></Route>
           <Route path="/user/employees" element={<Auth><Employees /></Auth>} />
         </Route>
       </Routes>

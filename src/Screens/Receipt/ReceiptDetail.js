@@ -5,11 +5,13 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 import "izitoast-react/dist/iziToast.css";
 import Moment from "react-moment";
 import '../../Styles/Print.css';
+import ReactToPrint from 'react-to-print';
 
 export default function ReceiptDetails() {
   const receiptStyle = {
     width: '25cm'
   };
+  const printRef = useRef();
   const elementRef = useRef(null);
   const [search, setSearch] = useState("");
   const [receipt, setReceipt] = useState([]);
@@ -72,6 +74,17 @@ export default function ReceiptDetails() {
             <div className="page-title-box d-sm-flex align-items-center justify-content-between">
               <h4 className="mb-sm-0">Receipt Details</h4>
               <div>
+                {/* <button
+                  onClick={printReceipt}
+                  className="btn btn-success"
+                >
+                  <i className="ri-printer-line align-bottom me-1"></i>{" "}
+                  Print
+                </button> */}
+                <ReactToPrint
+                  trigger={() => <button className="btn btn-success"><i className="ri-printer-line align-bottom me-1"></i>{" "}Print</button>}
+                  content={() => printRef.current}
+                />
                 <Link className="btn btn-success m-1" to="/user/receipts">
                   <i className="fa fa-list"></i> All Receipts
                 </Link>
@@ -79,8 +92,8 @@ export default function ReceiptDetails() {
             </div>
           </div>
         </div>
-        <div className="row justify-content-center" id="receipt">
-          <div className="col-xxl-9" style={receiptStyle}>
+        <div className="row justify-content-center" id="receipt" ref={printRef}>
+          <div className="col-xl-12" style={receiptStyle}>
             <div className="card" id="demo">
               <div className="row">
                 <div className="col-lg-12">
@@ -379,7 +392,7 @@ export default function ReceiptDetails() {
                               {receipt.status}
                             </span>
                           </p>
-                          {receipt.status != "Unpaid" ? (
+                          {receipt.status !== "Unpaid" ? (
                             <p className="text-muted mb-1">
                               Payment Method:{" "}
                               <span className="fw-medium" id="payment-method">
@@ -478,16 +491,6 @@ export default function ReceiptDetails() {
                             ];
                           })
                         : null}
-                    </div>
-                    <div className="hstack gap-2 justify-content-end d-print-none mt-4">
-                      <a
-                        // href="javascript:window.print()"
-                        onClick={printReceipt}
-                        className="btn btn-success"
-                      >
-                        <i className="ri-printer-line align-bottom me-1"></i>{" "}
-                        Print
-                      </a>
                     </div>
                   </div>
                 </div>

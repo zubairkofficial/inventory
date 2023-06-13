@@ -48,11 +48,7 @@ export default function Receipts() {
                     children={<div>
                         <Link className="btn btn-light m-1" to="/user/receipts/unpaid">Unpaid Receipts</Link>
                         <Link className="btn btn-light m-1" to="/user/receipts/today">Today Receipts</Link>
-                        {
-                        perms.can_create == 1 || Helpers.authUser.user_role == null ?
-                        <Link className="btn btn-success m-1" to="/user/receipts/add"><i className="fa fa-plus"></i> Add Receipts</Link>
-                        :null
-                        }
+                        <Link className="btn btn-success m-1" to="/user/drafts"> Draft Receipts</Link>
                     </div>} 
                 />
                 <div className="row">

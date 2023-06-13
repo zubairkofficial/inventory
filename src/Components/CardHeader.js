@@ -27,18 +27,18 @@ export default function CardHeader({ setState, title, data, fields }){
     }
     return (
         <div className="row" style={{ justifyContent: "center", alignItems: "center" }}>
-            <div className="col-7">
+            <div className="col-9">
                 <h3>{title}</h3>
             </div>
-            <div className="col-5">
+            <div className="col-3">
                 <form>
                     <div className="row">
-                        <div className="col-8">
+                        <div className={ query ? "col-10" : "col-12" }>
                             <Input value={query} placeholder={"Seach here..."} onChange={handleSearchChange} />
                         </div>
-                        <div className={ query ? "col-2" : "col-4" }>
+                        {/* <div className={ query ? "col-2" : "col-4" }>
                             <IconButton icon={"search-outline"} text={query ? null : "Search"} color={"success"} onClick={handleSearch} topMartgin={false} />
-                        </div>
+                        </div> */}
                         {query && <div className="col-2">
                             <IconButton icon={"close"} color={"warning"} onClick={cancelSearch} topMartgin={false} />
                         </div>}

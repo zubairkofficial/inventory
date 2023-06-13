@@ -6,9 +6,9 @@ import axios from 'axios';
 
 class Helpers{
     static appName = "Inventory System";
-    static baseUrl = "//127.0.0.1:4000/";
+    // static baseUrl = "//127.0.0.1:4000/";
     static publicPath = window.location.origin;
-    // static baseUrl = "http://3.80.216.93:3000/";
+    static baseUrl = "http://3.80.216.93:3000/";
     static authUser = JSON.parse(localStorage.getItem('user'));
     
     static authParentId = this.authUser == null ? '' : parseInt(this.authUser.parent_id) === 0 ? this.authUser._id : this.authUser.parent_id;

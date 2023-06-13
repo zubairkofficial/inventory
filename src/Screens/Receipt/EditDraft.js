@@ -109,23 +109,31 @@ export default function EditDraft() {
             label:response.data.vehicle.name +" "+ response.data.vehicle.model,
             value:response.data.vehicle
         };
-
-        const services = response.data.services;
-
-        const technician = {
-            label: response.data.technician.name,
-            value:response.data.technician,
-        };
-
-        const status = {
-            label: response.data.status,
-            value: response.data.status
-        };
-
-        const paymentType = {
-            label: response.data.paymentType,
-            value: response.data.paymentType,
-        };
+        let services = [];
+        if(response.data.services){
+          services = response.data.services;
+        }
+        let technician = {};
+        if(response.data.technician){
+          technician = {
+              label: response.data.technician.name,
+              value: response.data.technician,
+          };
+        }
+        let status = {};
+        if(response.data.status){
+          status = {
+              label: response.data.status,
+              value: response.data.status
+          };
+        }
+        let paymentType = {};
+        if(response.data.paymentType){
+          paymentType = {
+              label: response.data.paymentType,
+              value: response.data.paymentType,
+          };
+        }
 
         const dateString = response.data.date; // your date string
         const dateObj = new Date(dateString); // convert the string to a Date object
@@ -603,7 +611,7 @@ export default function EditDraft() {
                                   </thead>
                                 )}
                                 <tbody>
-                                  {receipt.services &&
+                                  {/* {receipt.services &&
                                     receipt.services.map((service, i) => (
                                       <tr key={i}>
                                         <td>
@@ -627,7 +635,7 @@ export default function EditDraft() {
                                         <td>{service.value.quantity}</td>
                                         <td>${service.value.total_price}</td>
                                       </tr>
-                                    ))}
+                                    ))} */}
                                   {receipt.taxIncluded == true ? (
                                     <tr>
                                       <th>SubTotal</th>
