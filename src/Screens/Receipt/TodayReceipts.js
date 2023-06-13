@@ -8,6 +8,7 @@ import { usePermissions } from "../../Hooks/usePermissions";
 import ActionButton from "../../Components/ActionButton";
 import CardHeader from "../../Components/CardHeader";
 import { useTitle } from "../../Hooks/useTitle";
+import moment from "moment";
 
 export default function TodayReceipts() {
     useTitle("Today Receipts");
@@ -63,6 +64,7 @@ export default function TodayReceipts() {
                                     "Amount Paid",
                                     "Amount Remaining",
                                     "Payment Status",
+                                    "Date",
                                     "Actions",
                                 ]}
                                 >
@@ -76,6 +78,7 @@ export default function TodayReceipts() {
                                         <td>$ {receipt.paid}</td>
                                         <td>$ {receipt.remaining}</td>
                                         <td>{receipt.status}</td>
+                                        <td>{moment(receipt.createdAt).format("MMM DD, YY hh:mm A")}</td>
                                         <td>
                                             {
                                                 receipt.status != 'Paid' && (parseInt(perms.can_update) === 1 || Helpers.authUser.user_role == null ) ?

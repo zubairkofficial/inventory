@@ -8,6 +8,7 @@ import { usePermissions } from "../../Hooks/usePermissions";
 import ActionButton from "../../Components/ActionButton";
 import CardHeader from "../../Components/CardHeader";
 import { useTitle } from "../../Hooks/useTitle";
+import moment from "moment";
 
 export default function UnpaidReceipts() {
     useTitle("Unpaid Receipts");
@@ -63,6 +64,7 @@ export default function UnpaidReceipts() {
                                     "Amount Paid",
                                     "Amount Remaining",
                                     "Payment Status",
+                                    "Date",
                                     "Actions",
                                 ]}
                                 >
@@ -76,6 +78,7 @@ export default function UnpaidReceipts() {
                                         <td>$ {receipt.paid}</td>
                                         <td>$ {receipt.remaining}</td>
                                         <td>{receipt.status}</td>
+                                        <td>{moment(receipt.createdAt).format("MMM DD, YY hh:mm A")}</td>
                                         <td>
 
                                             {

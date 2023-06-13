@@ -8,6 +8,7 @@ import { usePermissions } from "../../Hooks/usePermissions";
 import ActionButton from "../../Components/ActionButton";
 import CardHeader from "../../Components/CardHeader";
 import { useTitle } from "../../Hooks/useTitle";
+import moment from "moment";
 
 export default function Drafts() {
     useTitle("Drafts");
@@ -59,6 +60,7 @@ export default function Drafts() {
                                     "Amount Paid",
                                     "Amount Remaining",
                                     "Payment Status",
+                                    "Date",
                                     "Actions",
                                 ]}
                                 >
@@ -72,6 +74,7 @@ export default function Drafts() {
                                         <td>$ {draft.paid}</td>
                                         <td>$ {draft.remaining}</td>
                                         <td>{draft.status}</td>
+                                        <td>{moment(draft.createdAt).format("MMM DD, YY hh:mm A")}</td>
                                         <td>
                                             
 

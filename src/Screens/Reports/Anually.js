@@ -6,6 +6,7 @@ import DataTable from "../../Components/Datatable";
 import ReportIcon from "../../Components/ReportIcon";
 import CardHeader from "../../Components/CardHeader";
 import { useTitle } from "../../Hooks/useTitle";
+import moment from "moment";
 
 function AnnuallyReports() {
   useTitle("Annually Reports");
@@ -67,7 +68,7 @@ function AnnuallyReports() {
 
         <div className="card" id="contactList">
           <div className="card-body">
-              <CardHeader title={"Customers This Month"} setState={setCustomers} data={customerData} fields={["name", "email", "phone", "address"]} />
+              <CardHeader title={"Customers Annually"} setState={setCustomers} data={customerData} fields={["name", "email", "phone", "address"]} />
                 <DataTable
                   columns={[
                     "Sr. #",
@@ -75,6 +76,7 @@ function AnnuallyReports() {
                     "Email",
                     "Phone",
                     "Address",
+                    "Date",
                   ]}
                 >
                   {customers.map((customer, index) => {
@@ -85,6 +87,7 @@ function AnnuallyReports() {
                         <td>{customer.email}</td>
                         <td>{customer.phone}</td>
                         <td>{customer.address}</td>
+                        <td>{moment(customer.createdAt).format("MMM DD, YY hh:mm A")}</td>
                       </tr>
                     );
                   })}
@@ -106,6 +109,7 @@ function AnnuallyReports() {
                     "Year",
                     "Vin Number",
                     "Customer Name",
+                    "Date",
                   ]}
                 >
                   {vehicles.map((vehicle, index) => {
@@ -117,8 +121,7 @@ function AnnuallyReports() {
                         <td>{vehicle.year}</td>
                         <td>{vehicle.vin_number}</td>
                         <td>{vehicle.customer ? vehicle.customer.name : ''}</td>
-                        <td>
-                        </td>
+                        <td>{moment(vehicle.createdAt).format("MMM DD, YY hh:mm A")}</td>
                       </tr>
                     );
                   })}
@@ -141,6 +144,7 @@ function AnnuallyReports() {
                     "Amount Paid",
                     "Amount Remaining",
                     "Payment Status",
+                    "Date",
                     "Actions",
                   ]}
                 >
@@ -154,6 +158,7 @@ function AnnuallyReports() {
                         <td>$ {receipt.paid}</td>
                         <td>$ {receipt.remaining}</td>
                         <td>{receipt.status}</td>
+                        <td>{moment(receipt.createdAt).format("MMM DD, YY hh:mm A")}</td>
                         <td>
                           
                           <Link

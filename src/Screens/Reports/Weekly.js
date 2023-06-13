@@ -6,6 +6,7 @@ import DataTable from "../../Components/Datatable";
 import ReportIcon from "../../Components/ReportIcon";
 import CardHeader from "../../Components/CardHeader";
 import { useTitle } from "../../Hooks/useTitle";
+import moment from "moment";
 
 function WeeklyReports() {
   useTitle("Weekly Reports");
@@ -76,7 +77,7 @@ function WeeklyReports() {
                     "Email",
                     "Phone",
                     "Address",
-                    // "Actions",
+                    "Date",
                   ]}
                 >
                   {customers.map((customer, index) => {
@@ -87,7 +88,7 @@ function WeeklyReports() {
                         <td>{customer.email}</td>
                         <td>{customer.phone}</td>
                         <td>{customer.address}</td>
-                       
+                        <td>{moment(customer.createdAt).format("MMM DD, YY hh:mm A")}</td>
                       </tr>
                     );
                   })}
@@ -108,6 +109,7 @@ function WeeklyReports() {
                     "Year",
                     "Vin Number",
                     "Customer Name",
+                    "Date",
                   ]}
                 >
                   {vehicles.map((vehicle, index) => {
@@ -119,8 +121,7 @@ function WeeklyReports() {
                         <td>{vehicle.year}</td>
                         <td>{vehicle.vin_number}</td>
                         <td>{vehicle.customer ? vehicle.customer.name : ''}</td>
-                        <td>
-                        </td>
+                        <td>{moment(vehicle.createdAt).format("MMM DD, YY hh:mm A")}</td>
                       </tr>
                     );
                   })}
@@ -143,6 +144,7 @@ function WeeklyReports() {
                     "Amount Paid",
                     "Amount Remaining",
                     "Payment Status",
+                    "Date",
                     "Actions",
                   ]}
                 >
@@ -156,6 +158,7 @@ function WeeklyReports() {
                         <td>$ {receipt.paid}</td>
                         <td>$ {receipt.remaining}</td>
                         <td>{receipt.status}</td>
+                        <td>{moment(receipt.createdAt).format("MMM DD, YY hh:mm A")}</td>
                         <td>
                            
                           

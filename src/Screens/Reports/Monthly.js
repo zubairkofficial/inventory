@@ -8,6 +8,7 @@ import "izitoast-react/dist/iziToast.css";
 import ReportIcon from "../../Components/ReportIcon";
 import CardHeader from "../../Components/CardHeader";
 import { useTitle } from "../../Hooks/useTitle";
+import moment from "moment";
 
 function MonthlyReports() {
   useTitle("Monthly Reports");
@@ -77,6 +78,7 @@ function MonthlyReports() {
                     "Email",
                     "Phone",
                     "Address",
+                    "Date",
                   ]}
                 >
                   {customers.map((customer, index) => {
@@ -87,6 +89,7 @@ function MonthlyReports() {
                         <td>{customer.email}</td>
                         <td>{customer.phone}</td>
                         <td>{customer.address}</td>
+                        <td>{moment(customer.createdAt).format("MMM DD, YY hh:mm A")}</td>
                       </tr>
                     );
                   })}
@@ -99,7 +102,7 @@ function MonthlyReports() {
         </div>
         <div className="card" id="contactList">
             <div className="card-body">
-                <CardHeader title={"Vehicles This Month"} setState={setVehicle} data={vehiclesData} fields={["name", "model", "year", "vin_number", 'customer.name']} />
+                <CardHeader title={"Vehicles Annually"} setState={setVehicle} data={vehiclesData} fields={["name", "model", "year", "vin_number", 'customer.name']} />
                 <DataTable
                   columns={[
                     "Sr. #",
@@ -108,6 +111,7 @@ function MonthlyReports() {
                     "Year",
                     "Vin Number",
                     "Customer Name",
+                    "Date",
                   ]}
                 >
                   {vehicles.map((vehicle, index) => {
@@ -119,8 +123,7 @@ function MonthlyReports() {
                         <td>{vehicle.year}</td>
                         <td>{vehicle.vin_number}</td>
                         <td>{vehicle.customer ? vehicle.customer.name : ''}</td>
-                        <td>
-                        </td>
+                        <td>{moment(vehicle.createdAt).format("MMM DD, YY hh:mm A")}</td>
                       </tr>
                     );
                   })}
@@ -133,7 +136,7 @@ function MonthlyReports() {
 
         <div className="card" id="contactList">
             <div className="card-body">
-                <CardHeader title={"Receipts This Month"} setState={setReceipts} data={receiptsData} fields={["customer.name", "vehicle.name", "totalPrice", "paid", 'remaining', 'status']} />
+                <CardHeader title={"Receipts Annually"} setState={setReceipts} data={receiptsData} fields={["customer.name", "vehicle.name", "totalPrice", "paid", 'remaining', 'status']} />
                 <DataTable
                   columns={[
                     "Sr. #",
@@ -143,6 +146,7 @@ function MonthlyReports() {
                     "Amount Paid",
                     "Amount Remaining",
                     "Payment Status",
+                    "Date",
                     "Actions",
                   ]}
                 >
@@ -156,6 +160,7 @@ function MonthlyReports() {
                         <td>$ {receipt.paid}</td>
                         <td>$ {receipt.remaining}</td>
                         <td>{receipt.status}</td>
+                        <td>{moment(receipt.createdAt).format("MMM DD, YY hh:mm A")}</td>
                         <td>
                           
                           <Link
