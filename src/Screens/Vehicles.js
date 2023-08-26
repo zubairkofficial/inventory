@@ -8,23 +8,28 @@ import CardHeader from "../Components/CardHeader";
 import ActionButton from "../Components/ActionButton";
 import AddVehicle from "../Includes/Vehicle/AddVehicle";
 import { usePermissions } from "../Hooks/usePermissions";
+import Pagination from "../Components/Pagination";
 
 function Vehicles() {
   
     const addVehicleRef = useRef(null);
     const permissions = usePermissions();
     const [vehicles, setVehicles] = useState([]);
+    const [paginated, setPaginated] = useState([]);
+    const [pageNo, setPageNo] = useState(0);
     const [data, setData] = useState([]);
     const [perms, setPerms] = useState([]);
+    const [showForm, setShowForm] = useState(false);
 
   let navigate = useNavigate();
   const getVehicles = () => {
     axios
       .get(`${Helpers.baseUrl}vehicles/all/${Helpers.authParentId}`, Helpers.headers)
       .then((response) => {
-        console.log(response.data);
-        setVehicles(response.data.reverse());
-        setData(response.data);
+        let data = response.data.reverse();
+        setVehicles(data);
+        setData(data);
+        setPaginated(Helpers.paginate(data));
       })
       .catch((error) => {
         Helpers.unauthenticated(error, navigate);
@@ -48,12 +53,14 @@ function Vehicles() {
   return (
     <div className="page-content">
       <div className="container-fluid">
-        <PageTitle title={"Vehicles"} />
+        <PageTitle title={`Vehicles - ${data.length}`}>
+          <button onClick={() => setShowForm(true)} className="btn btn-success">Add New Vehicle</button>
+        </PageTitle>
         <div className="row">
-          <div className="col-8">
+          <div className={showForm ? "col-8" : "col-12"}>
             <div className="card">
               <div className="card-body border-bottom">
-                <CardHeader setState={setVehicles} title={"All Vehicles"} data={data} fields={["name", "model", "vin_number", "year", "customer.name"]} />
+                <CardHeader setState={setPaginated} paginate={true} setPageNo={setPageNo} title={"All Vehicles"} data={data} fields={["name", "model", "vin_number", "year", "customer.name"]} />
                 <DataTable
                   columns={[
                     "Sr. #",
@@ -65,10 +72,10 @@ function Vehicles() {
                     "Actions",
                   ]}
                 >
-                  {vehicles.map((vehicle, index) => {
+                  {paginated.length > 0 && paginated[pageNo].map((vehicle, index) => {
                     return (
                       <tr key={vehicle._id}>
-                        <td>{index + 1}</td>
+                        <td>{(pageNo * 10) + (index + 1)}</td>
                         <td>{vehicle.name}</td>
                         <td>{vehicle.model}</td>
                         <td>{vehicle.vin_number}</td>
@@ -89,16 +96,17 @@ function Vehicles() {
                     );
                   })}
                 </DataTable>
+                <Pagination paginated={paginated} pageNo={pageNo} setPageNo={setPageNo} />
                 {vehicles.length === 0 ?<div className="text-center">
                   No data available to display
                 </div> : null}
               </div>
             </div>
           </div>
-          <div className="col-4">
+          <div className="col-4" style={{ display: `${ showForm ? 'block' : 'none' }` }}>
             {
               (perms.can_create == 1 || Helpers.authUser.user_role == null || perms.can_update == 1) &&
-              <AddVehicle getVehicles={getVehicles} ref={addVehicleRef} />
+              <AddVehicle setShowForm={setShowForm} getVehicles={getVehicles} ref={addVehicleRef} />
             }
           </div>
         </div>

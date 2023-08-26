@@ -1,3 +1,10 @@
 .ml-5{
   margin-left: 5px;
 }
+.text-right{
+  text-align: right;
+}
+.preview{
+  height: 80px;
+  margin-bottom: 20px;
+}

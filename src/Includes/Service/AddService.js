@@ -11,9 +11,10 @@ const options =  [
   {label:"Taxable", value:'Taxable', is_disabled: false},
   {label:"Non Taxable", value:'Non Taxable', is_disabled: false},
 ];
-const AddService = forwardRef(({ getServices }, ref) => {
+const AddService = forwardRef(({ getServices, setShowForm }, ref) => {
     let navigate = useNavigate();
     let serviceInit = {
+        date: Helpers.currentDate(),
         service_name: "",
         description: "",
         price: "",
@@ -44,6 +45,7 @@ const AddService = forwardRef(({ getServices }, ref) => {
             setIsEditing(false);
             Helpers.toast("success", "Service saved successfully");
             setIsLoading(false);
+            setShowForm(false);
           })
           .catch((error) => {
             setErrors(Helpers.error_response(error));
@@ -58,7 +60,11 @@ const AddService = forwardRef(({ getServices }, ref) => {
         }
     }));
 
-    const cancelSaving = () => {
+    const cancelSaving = e => {
+      e.preventDefault();
+      if(setShowForm){
+        setShowForm(false);
+      }
         setIsEditing(false);
         setSelectedCustomer({});
         setService(serviceInit);
@@ -75,35 +81,35 @@ const AddService = forwardRef(({ getServices }, ref) => {
         </div>
         <div className="card-body border-bottom">
           <form>
-            <div className="form-group mb-3">
+            <div className="form-group mb-2">
               <Input label={"Service Name"} value={service.service_name}  error={errors.service_name} onChange={e => {
                     setService({ ...service, service_name: e.target.value })
                 }} />
             </div>
-            <div className="form-group mb-3">
+            <div className="form-group mb-2">
            
                <Input label={"Service Description"} value={service.description}  error={errors.description} onChange={e => {
                     setService({ ...service, description: e.target.value })
                 }} />
             </div>
-            <div className="form-group mb-3">
+            <div className="form-group mb-2">
               <Input label={"Price"} value={service.price}  error={errors.price} onChange={e => {
                     setService({ ...service, price: e.target.value })
                 }} />
             </div>
-            <div className="form-group mb-3">
+            <div className="form-group mb-2">
                      <SelectInput label={"Tax Status"} value={service.tax} placeholder={"Choose Tax Option"} error={errors.tax} options={options} onChange={e => {
                     setService({ ...service, tax: e.target.value });
                 }} />
               </div>
               <div className="row">
-                    <div className="col-6">
-                        <Button text={"Save Service"} color={"success"} onClick={handleSaveService} fullWidth={true} isLoading={isLoading} />
-                    </div>
-                    {isEditing && <div className="col-6">
-                        <Button text={"Cancel"} color={"danger"} onClick={cancelSaving} fullWidth={true} />
-                    </div>}
-                </div>
+                  <div className="col-6">
+                      <Button text={"Save Service"} color={"success"} onClick={handleSaveService} fullWidth={true} isLoading={isLoading} />
+                  </div>
+                  {<div className="col-6">
+                      <Button text={"Cancel"} color={"danger"} onClick={cancelSaving} fullWidth={true} />
+                  </div>}
+              </div>
           </form>
         </div>
       </div>

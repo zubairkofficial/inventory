@@ -5,8 +5,9 @@ import Button from "../../Components/Button";
 import axios from "axios";
 import SelectInput from "../../Components/SelectInput";
 
-const AddOil = forwardRef(({ getOils }, ref) => {
+const AddOil = forwardRef(({ getOils, setShowForm }, ref) => {
     let oilInit = {
+        date: Helpers.currentDate(),
         name:"",
         brand: "",
         type: "",
@@ -36,6 +37,7 @@ const AddOil = forwardRef(({ getOils }, ref) => {
               setIsEditing(false);
               setIsLoading(false);
               Helpers.toast("success", "Oil saved successfully");
+              setShowForm(false);
           }).catch((error) => {
               setErrors(Helpers.error_response(error));
               setIsLoading(false);
@@ -47,7 +49,9 @@ const AddOil = forwardRef(({ getOils }, ref) => {
             setOil(oilToEdit);
         }
     }));
-      const cancelSaving = () => {
+      const cancelSaving = e => {
+        e.preventDefault();
+        setShowForm(false);
         setIsEditing(false);
         setOil(oilInit);
     }
@@ -85,7 +89,7 @@ const AddOil = forwardRef(({ getOils }, ref) => {
                       <div className="col-6">
                           <Button text={"Save Oil"} color={"success"} onClick={handleSaveOil} fullWidth={true} isLoading={isLoading} />
                       </div>
-                      {isEditing && <div className="col-6">
+                      {<div className="col-6">
                           <Button text={"Cancel"} color={"danger"} onClick={cancelSaving} fullWidth={true} />
                       </div>}
                   </div>

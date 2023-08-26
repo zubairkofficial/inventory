@@ -76,11 +76,11 @@ export default function Receipts() {
                                         <td>{index + 1}</td>
                                         <td>{receipt.customer ? receipt.customer.name : ''}</td>
                                         <td>{receipt.vehicle ? receipt.vehicle.name+' '+receipt.vehicle.model : ''}</td>
-                                        <td>$ {receipt.totalPrice}</td>
-                                        <td>$ {receipt.paid}</td>
-                                        <td>$ {receipt.remaining}</td>
+                                        <td>${receipt.totalPrice}</td>
+                                        <td>${receipt.paid}</td>
+                                        <td>${receipt.remaining}</td>
                                         <td>{receipt.status}</td>
-                                        <td>{moment(receipt.createdAt).format("MMM DD, YY hh:mm A")}</td>
+                                        <td>{moment(receipt.created_date).format("MMM DD, YY hh:mm A")}</td>
                                         <td>
                                             {
                                                 receipt.status != 'Paid' && (parseInt(perms.can_update) === 1 || Helpers.authUser.user_role == null ) ?

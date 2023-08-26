@@ -5,9 +5,10 @@ import Button from "../../Components/Button";
 import axios from "axios";
 import ReactSelect from "../../Components/ReactSelect";
 
-const AddVehicle = forwardRef(({ getVehicles }, ref) => {
+const AddVehicle = forwardRef(({ getVehicles, setShowForm }, ref) => {
 
     let vehicleInit = {
+        date: Helpers.currentDate(),
         company: "",
         name: "",
         model: "",
@@ -35,6 +36,7 @@ const AddVehicle = forwardRef(({ getVehicles }, ref) => {
             setIsEditing(false);
             Helpers.toast("success", "Vehicle saved successfully");
             setIsLoading(false);
+            setShowForm(false);
         }).catch((error) => {
             setErrors(Helpers.error_response(error));
             setIsLoading(false);
@@ -68,7 +70,11 @@ const AddVehicle = forwardRef(({ getVehicles }, ref) => {
         }
     }));
 
-    const cancelSaving = () => {
+    const cancelSaving = e => {
+        e.preventDefault();
+        if(setShowForm){
+            setShowForm(false);
+        }
         setIsEditing(false);
         setSelectedCustomer({});
         setVehicle(vehicleInit);
@@ -110,7 +116,7 @@ const AddVehicle = forwardRef(({ getVehicles }, ref) => {
                     <div className="col-6">
                         <Button text={"Save Vehicle"} color={"success"} onClick={handleSaveVehicle} fullWidth={true} isLoading={isLoading} />
                     </div>
-                    {isEditing && <div className="col-6">
+                    {<div className="col-6">
                         <Button text={"Cancel"} color={"danger"} onClick={cancelSaving} fullWidth={true} />
                     </div>}
                 </div>

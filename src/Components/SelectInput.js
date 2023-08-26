@@ -1,6 +1,6 @@
 export default function SelectInput({ label, value, onChange, options, error }){
     return (
-        <div className="form-group mb-3">
+        <div className="form-group mb-2">
             <label>{label}</label>
             <select
                 className="form-control"

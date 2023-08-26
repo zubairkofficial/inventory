@@ -16,7 +16,8 @@ export default function Home(){
     let navigate = useNavigate();
 
     const getData = () => {
-        axios.get(`${Helpers.baseUrl}reports/daily/${Helpers.authParentId}`, Helpers.headers).then((response) => {
+        let today = Helpers.currentDate();
+        axios.get(`${Helpers.baseUrl}reports/daily/${today}/${Helpers.authParentId}`, Helpers.headers).then((response) => {
           setReceipts(response.data.receipts.reverse() );
           setCustomers(response.data.customers.reverse());
           setVehicles(response.data.vehicles.reverse());

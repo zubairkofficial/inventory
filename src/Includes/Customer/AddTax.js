@@ -5,7 +5,7 @@ import Helpers from "../../Config/Helpers";
 import Input from "../../Components/Input";
 import { useNavigate } from "react-router-dom";
 
-export default function AddTax(){
+export default function AddTax({setShowTax}){
     let taxValueInit = {tax: 0};
     const [taxValue, setTaxValue] = useState(taxValueInit);
     const [errors, setErrors] = useState({});
@@ -24,6 +24,7 @@ export default function AddTax(){
               getTax();
               Helpers.toast("success", "Tax updated successfully");
               setBtnLoading(false);
+              setShowTax(false);
             })
             .catch((error) => {
               setErrors(Helpers.error_response(error));
@@ -60,7 +61,14 @@ export default function AddTax(){
                     <Input label={"Tax Value (In %)"} placeholder={"Tax Value"} error={errors.tax} value={taxValue.tax} onChange={e => {
                         setTaxValue({...taxValue, tax:e.target.value, user_id:Helpers.authParentId})
                     }} />
-                    <Button text={"Save Tax"} color={"success"} onClick={handleSaveTax} fullWidth={false} isLoading={btnLoading} />
+                    <div className="row">
+                        <div className="col-6">
+                            <Button text={"Save Tax"} color={"success"} onClick={handleSaveTax} fullWidth={true} isLoading={btnLoading} />
+                        </div>
+                        <div className="col-6">
+                            <Button text={"Cancel"} color={"danger"} onClick={() => setShowTax(false)} fullWidth={true} isLoading={btnLoading} />
+                        </div>
+                    </div>
                 </form>
             </div>
         </div>

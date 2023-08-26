@@ -101,17 +101,14 @@ export default function ReceiptDetails() {
                     <div className="d-flex">
                       <div className="flex-grow-1">
                         <img
-                          src={require("../../images/logo-dark.png")}
+                          src={`${Helpers.baseUrl}uploads/${Helpers.authUser.profile}`}
                           className="card-logo card-logo-dark"
                           alt="logo dark"
                           height="17"
                         />
-                        <img
-                          src={require("../../images/logo-light.png")}
-                          className="card-logo card-logo-light"
-                          alt="logo light"
-                          height="17"
-                        />
+                        <div className="mt-3">
+                          #<span id="invoice-no">{receipt._id}</span>
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -119,15 +116,15 @@ export default function ReceiptDetails() {
                 <div className="col-lg-12">
                   <div className="card-body p-4">
                     <div className="row g-3">
-                      <div className="col-lg-3 col-6">
+                      {/* <div className="col-lg-3 col-6">
                         <p className="text-muted mb-2 text-uppercase fw-semibold m-1" style={{ display: "inline-block" }}>
                           Invoice No
                         </p>
                         <h5 className="fs-14 mb-0 m-1" style={{ display: "inline-block" }}>
                           #<span id="invoice-no">{receipt._id}</span>
                         </h5>
-                      </div>
-                      <div className="col-lg-3 col-6">
+                      </div> */}
+                      <div className="col-lg-12 col-12 text-right">
                         <p className="text-muted mb-2 text-uppercase fw-semibold m-1" style={{ display: "inline-block" }}>
                           Date
                         </p>
@@ -137,7 +134,7 @@ export default function ReceiptDetails() {
                           </span>{" "}
                         </h5>
                       </div>
-                      <div className="col-lg-3 col-6 hide-on-print">
+                      {/* <div className="col-lg-3 col-6 hide-on-print">
                         <p className="text-muted mb-2 text-uppercase fw-semibold">
                           Payment Status
                         </p>
@@ -161,14 +158,14 @@ export default function ReceiptDetails() {
                         <h5 className="fs-14 mb-0">
                           $<span id="total-amount">{receipt.totalPrice}</span>
                         </h5>
-                      </div>
+                      </div> */}
                     </div>
                   </div>
                 </div>
                 <div className="col-lg-12">
                   <div className="card-body p-4 border-top border-top-dashed">
                     <div className="row g-3">
-                      <div className="col-4">
+                      <div className="col-5">
                         <h6 className="text-muted text-uppercase fw-semibold mb-3">
                           Customer Details
                         </h6>
@@ -239,24 +236,30 @@ export default function ReceiptDetails() {
                           </span>
                         </p>
                       </div>
-                      <div className="col-4">
+                      <div className="col-3 text-right">
                         <h6 className="text-muted text-uppercase fw-semibold mb-3">
                           Technician Details
                         </h6>
-                        <p className="text-muted mb-1">
-                          <span>Name </span>
-                          <span id="shipping-phone-no">
-                            {" "}
-                            {receipt.technician ? receipt.technician.name : ""}
-                          </span>
-                        </p>
-                        <p
-                          className="text-muted mb-1"
-                          id="shipping-address-line-1"
-                        >
-                          <span>Phone: </span>{" "}
-                          {receipt.technician ? receipt.technician.phone : ""}
-                        </p>
+                        {receipt.technician && receipt.technician.map(tech => {
+                          return (
+                            <div>
+                              <p className="text-muted mb-1">
+                                <span><strong>Name:</strong> </span>
+                                <span id="shipping-phone-no">
+                                  {" "}
+                                  {tech ? tech.name : ""}
+                                </span>
+                              </p>
+                              <p
+                                className="text-muted mb-1"
+                                id="shipping-address-line-1"
+                              >
+                                <span><strong>Phone:</strong> </span>{" "}
+                                {tech ? tech.phone : ""}
+                              </p>
+                            </div>
+                          );
+                        })}
                       </div>
                     </div>
                   </div>
@@ -370,7 +373,7 @@ export default function ReceiptDetails() {
                         </tbody>
                       </table>
                     </div>
-                    <div className="row hide-on-print">
+                    {/* <div className="row hide-on-print">
                       <div className="col-12">
                             <div className="mt-3">
                             <h6 className="text-muted text-uppercase fw-semibold mb-3">
@@ -491,7 +494,7 @@ export default function ReceiptDetails() {
                             ];
                           })
                         : null}
-                    </div>
+                    </div> */}
                   </div>
                 </div>
               </div>

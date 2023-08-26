@@ -15,7 +15,7 @@ function Header(){
           <div className="navbar-header">
             <div className="d-flex"></div>
             <div className="d-flex align-items-center">
-                <Link className="btn btn-success m-1" to="/user/receipts/add"><i className="fa fa-plus"></i> Add Receipts</Link>
+                <Link className="btn btn-success m-1" to="/user/receipts/add"><i className="fa fa-plus"></i> Add Receipt</Link>
                 <div className="dropdown ms-sm-3 header-item topbar-user">
                     <button type="button" className="btn shadow-none" id="page-header-user-dropdown" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         <span className="d-flex align-items-center">

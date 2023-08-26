@@ -22,8 +22,10 @@ function WeeklyReports() {
 
   let navigate = useNavigate();
   const getReport = () => {
+    let current = Helpers.currentDate();
+    let week_before = Helpers.weekBefore();
     axios
-      .get(`${Helpers.baseUrl}reports/weekly/${Helpers.authParentId}`, Helpers.headers)
+      .get(`${Helpers.baseUrl}reports/weekly/${current}/${week_before}/${Helpers.authParentId}`, Helpers.headers)
       .then((response) => {
         setReport(response.data);
         setReceipts(response.data.receipts.reverse());

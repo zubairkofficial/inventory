@@ -8,12 +8,16 @@ import PageTitle from "../Components/PageTitle";
 import CardHeader from "../Components/CardHeader";
 import AddOil from "../Includes/Oils/AddOil";
 import { usePermissions } from "../Hooks/usePermissions";
+import Pagination from "../Components/Pagination";
 
 function Oils() {
   const permissions = usePermissions();
   const [oils, setOils] = useState([]);
   const [perms, setPerms] = useState([]);
   const [data, setData] = useState([]);
+  const [paginated, setPaginated] = useState([]);
+  const [pageNo, setPageNo] = useState(0);
+  const [showForm, setShowForm] = useState(false);
   const addOilRef = useRef(null);
 
   let navigate = useNavigate();
@@ -21,8 +25,10 @@ function Oils() {
     axios
       .get(`${Helpers.baseUrl}oils/all/${Helpers.authParentId}`, Helpers.headers)
       .then((response) => {
-        setOils(response.data.reverse());
-        setData(response.data);
+        let data = response.data.reverse();
+        setOils(data);
+        setData(data);
+        setPaginated(Helpers.paginate(data));
       })
       .catch((error) => {
         Helpers.unauthenticated(error, navigate);
@@ -30,6 +36,7 @@ function Oils() {
   };
 
   const hanldeEdit = (serviceToEdit) => {
+    setShowForm(true);
     addOilRef.current.handleEdit(serviceToEdit);
   };
 
@@ -44,12 +51,14 @@ function Oils() {
   return (
     <div className="page-content">
       <div className="container-fluid">
-      <PageTitle title={"Oils"} />
+      <PageTitle title={`Oils - ${data.length}`}>
+        <button onClick={() => setShowForm(true)} className="btn btn-success">Add New Oil</button>
+      </PageTitle>
         <div className="row">
-          <div className="col-8">
+          <div className={showForm ? "col-8" : "col-12"}>
             <div className="card">
               <div className="card-body border-bottom">
-              <CardHeader setState={setOils} title={"All Oils"} data={data} fields={["name", "brand", "type","pricePerVehicle"]} />
+              <CardHeader setState={setPaginated} paginate={true} setPageNo={setPageNo} title={"All Oils"} data={data} fields={["name", "brand", "type","pricePerVehicle"]} />
                 <DataTable
                   columns={[
                     "Sr. #",
@@ -62,7 +71,7 @@ function Oils() {
                     "Actions",
                   ]}
                 >
-                  {oils.map((oil, index) => {
+                  {paginated.length > 0 && paginated[pageNo].map((oil, index) => {
                     return (
                       <tr key={oil._id}>
                         <td>{index + 1}</td>
@@ -70,8 +79,8 @@ function Oils() {
                         <td>{oil.brand}</td>
                         <td>{oil.type}</td>
                         <td>{oil.quantity}</td>
-                        <td>$ {oil.pricePerQuartz}</td>
-                        <td>$ {oil.pricePerVehicle}</td>
+                        <td>${oil.pricePerQuartz}</td>
+                        <td>${oil.pricePerVehicle}</td>
                         <td>
                           {
                             perms.can_update == 1 || Helpers.authUser.user_role == null ?
@@ -98,6 +107,7 @@ function Oils() {
                     );
                   })}
                 </DataTable>
+                <Pagination paginated={paginated} pageNo={pageNo} setPageNo={setPageNo} />
                 {oils.length === 0 ? (
                   <div className="text-center">
                     No data available to display
@@ -106,10 +116,10 @@ function Oils() {
               </div>
             </div>
           </div>
-          <div className="col-4">
+          <div className="col-4" style={{ display: `${ showForm ? 'block' : 'none' }` }}>
             {
               (perms.can_create == 1 || Helpers.authUser.user_role == null || perms.can_update == 1) &&
-              <AddOil getOils={getOils} ref={addOilRef} />
+              <AddOil setShowForm={setShowForm} getOils={getOils} ref={addOilRef} />
             }
           </div>
         </div>

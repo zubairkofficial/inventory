@@ -1,6 +1,6 @@
-function DataTable({children, columns}){
+function DataTable({children, columns, style}){
     return (
-        <table className="table table-striped">
+        <table className="table table-striped" style={style}>
             <thead>
                 <tr>
                     {columns.map(column => {

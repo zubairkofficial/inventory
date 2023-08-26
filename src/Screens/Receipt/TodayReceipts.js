@@ -21,8 +21,9 @@ export default function TodayReceipts() {
     const [data, setData] = useState([]);
 
     const getTodayReceipts = () => {
+        let date = Helpers.currentDate();
         axios
-          .get(`${Helpers.baseUrl}receipts/today/${Helpers.authParentId}`, Helpers.headers)
+          .get(`${Helpers.baseUrl}receipts/today/${date}/${Helpers.authParentId}`, Helpers.headers)
           .then((response) => {
               setReceipts(response.data.reverse());
               setData(response.data);
@@ -78,7 +79,7 @@ export default function TodayReceipts() {
                                         <td>$ {receipt.paid}</td>
                                         <td>$ {receipt.remaining}</td>
                                         <td>{receipt.status}</td>
-                                        <td>{moment(receipt.createdAt).format("MMM DD, YY hh:mm A")}</td>
+                                        <td>{moment(receipt.created_date).format("MMM DD, YY hh:mm A")}</td>
                                         <td>
                                             {
                                                 receipt.status != 'Paid' && (parseInt(perms.can_update) === 1 || Helpers.authUser.user_role == null ) ?

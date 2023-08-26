@@ -19,6 +19,7 @@ function Services() {
   const [pageNo, setPageNo] = useState(0);
   const [data, setData] = useState([]);
   const [perms, setPerms] = useState([]);
+  const [showForm, setShowForm] = useState(false);
 
   let navigate = useNavigate();
   const getServices = () => {
@@ -36,6 +37,7 @@ function Services() {
   };
 
   const hanldeEdit = (serviceToEdit) => {
+    setShowForm(true);
     addServiceRef.current.handleEdit(serviceToEdit);
   };
 
@@ -51,9 +53,11 @@ function Services() {
   return (
     <div className="page-content">
       <div className="container-fluid">
-      <PageTitle title={"Services"} />
+      <PageTitle title={`Services - ${ data.length }`}>
+        <button onClick={() => setShowForm(true)} className="btn btn-success">Add New Service</button>
+      </PageTitle>
         <div className="row">
-          <div className="col-8">
+          <div className={showForm ? "col-8" : "col-12"}>
             <div className="card">
               <div className="card-body border-bottom">
               <CardHeader setState={setPaginated} paginate={true} setPageNo={setPageNo} title={"All Services"} data={data} fields={["service_name", "description", "price"]} />
@@ -61,7 +65,7 @@ function Services() {
                   columns={[
                     "Sr. #",
                     "Service Name",
-                    "Description",
+                    showForm ? "" : "Description",
                     "Price",
                     "Actions",
                   ]}
@@ -71,7 +75,7 @@ function Services() {
                       <tr key={service._id}>
                         <td>{ (pageNo * 10) + (index + 1) }</td>
                         <td>{service.service_name}</td>
-                        <td>{service.description}</td>
+                        <td>{!showForm && service.description}</td>
                         <td>$ {service.price}</td>
                         <td>
                           {
@@ -94,10 +98,10 @@ function Services() {
               </div>
             </div>
           </div>
-          <div className="col-4">
+          <div className="col-4" style={{ display: `${ showForm ? 'block' : 'none' }` }}>
              {
               (perms.can_create == 1 || Helpers.authUser.user_role == null || perms.can_update == 1) &&
-              <AddService getServices={getServices} ref={addServiceRef} />
+              <AddService setShowForm={setShowForm} getServices={getServices} ref={addServiceRef} />
             }
           </div>
         </div>

@@ -312,24 +312,30 @@ export default function AddReceipt() {
     // console.log(date);
     setBtnLoading(true);
     setErrors({});
-    let data = receipt;
-    receipt.created_date = Helpers.getCurrentDateTime()
-    // setReceipt({...receipt, created_date: Helpers.getCurrentDateTime});
-    // // const addOrUpdate = isEditing ? "update" : "add";
-    axios
-      .post(`${Helpers.baseUrl}receipts/add`, data, Helpers.headers)
-      .then((response) => {
-        // console.log(response.data);
-        setReceipt(receiptInit);
-        // setIsEditing(false);
-        Helpers.toast("success", "Receipt saved successfully");
-        setBtnLoading(false);
-        navigate("/user/receipts");
-      })
-      .catch((error) => {
-        setErrors(Helpers.error_response(error));
-        setBtnLoading(false);
-      });
+    if(receipt.services){
+      if(receipt.status){
+        let data = receipt;
+        receipt.created_date = Helpers.getCurrentDateTime();
+        axios
+          .post(`${Helpers.baseUrl}receipts/add`, data, Helpers.headers)
+          .then((response) => {
+            // console.log(response.data);
+            setReceipt(receiptInit);
+            // setIsEditing(false);
+            Helpers.toast("success", "Receipt saved successfully");
+            setBtnLoading(false);
+            navigate("/user/receipts");
+          })
+          .catch((error) => {
+            setErrors(Helpers.error_response(error));
+            setBtnLoading(false);
+          });
+      }else{
+        setErrors({...errors, services: "Payment status is required"});
+      }
+    }else{
+      setErrors({...errors, services: "Services field is required"});
+    }
   };
 
   // useEffect(() => {

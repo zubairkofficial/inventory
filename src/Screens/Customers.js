@@ -22,6 +22,8 @@ export default function Customers(){
     const [pageNo, setPageNo] = useState(0);
     const [data, setData] = useState([]);
     const [perms, setPerms] = useState([]);
+    const [showForm, setShowForm] = useState(false);
+    const [showTax, setShowTax] = useState(false);
 
     let navigate = useNavigate();
 
@@ -46,6 +48,7 @@ export default function Customers(){
     }, []);
 
     const hanldeEdit = (customerToEdit) => {
+        setShowForm(true);
         addCustomerRef.current.handleEdit(customerToEdit);
     };
     
@@ -53,17 +56,32 @@ export default function Customers(){
         Helpers.confirmBox(`${Helpers.baseUrl}customers/delete/${customerId}`, navigate, getCustomers)
     };
 
+    const showCustomerForm = () => {
+        setShowForm(true);
+        setShowTax(false);
+    }
+
+    const showTaxForm = () => {
+        setShowTax(true);
+        setShowForm(false);
+    }
+
     return (
         <div className="page-content">
             <div className="container-fluid">
-                <PageTitle title={"All Customers"} />
+                <PageTitle title={`All Customers - ${data.length}`}>
+                    <div>
+                        <button onClick={showCustomerForm} className="btn btn-success m-1">Add New Customer</button>
+                        <button onClick={showTaxForm} className="btn btn-success m-1">Update Tax</button>
+                    </div>
+                </PageTitle>
                 <div className="row">
-                    <div className="col-8">
+                    <div className={ (showForm || showTax) ? 'col-8' : 'col-12' }>
                         <div className="card">
                             <div className="card-body border-bottom">
-                                <CardHeader title={"All Customers"} paginate={true} setState={setPaginated} setPageNo={setPageNo} data={data} fields={["name", "company_name", "phone", "email", "address"]} />
+                                <CardHeader title={"All Customers"} paginate={true} setState={setPaginated} setPageNo={setPageNo} data={data} fields={["name", "company_name", "phone", "email", "address", "tax"]} />
                                 <DataTable
-                                    columns={[
+                                    columns={(!showForm && !showTax) ? [
                                         "Sr. #",
                                         "Customer Name",
                                         "Company Name",
@@ -72,6 +90,10 @@ export default function Customers(){
                                         "Address",
                                         "Taxable",
                                         "Actions",
+                                    ] : [
+                                        "Sr. #",
+                                        "Customer Name",
+                                        "Phone",
                                     ]}
                                 >
                                 {paginated.length > 0 && paginated[pageNo].map((customer, index) => {
@@ -79,12 +101,12 @@ export default function Customers(){
                                         <tr key={customer._id}>
                                             <td>{ (pageNo * 10) + (index + 1) }</td>
                                             <td>{customer.name}</td>
-                                            <td>{customer.company_name}</td>
-                                            <td>{customer.email}</td>
+                                            {(!showForm && !showTax) && <td>{customer.company_name}</td>}
+                                            {(!showForm && !showTax) && <td>{customer.email}</td>}
                                             <td>{customer.phone}</td>
-                                            <td>{customer.address}</td>
-                                            <td>{customer.tax}</td>
-                                            <td>
+                                            {(!showForm && !showTax) && <td>{customer.address}</td>}
+                                            {(!showForm && !showTax) && <td>{customer.tax} { customer.taxValue > 0 && ` - ${customer.taxValue}%`  }</td>}
+                                            {(!showForm && !showTax) && <td>
                                                 <Link
                                                     to={`/user/receipts/customer/${customer.name}/${customer._id}`}
                                                     className="btn btn-warning btn-sm m-1"
@@ -100,7 +122,7 @@ export default function Customers(){
                                                 (Helpers.authUser.user_role == null || parseInt(perms.can_delete) === 1) &&
                                                 <ActionButton icon={"trash-outline"} color={"danger"} onClick={() => handleDelete(customer._id)} />
                                             }
-                                            </td>
+                                            </td>}
                                         </tr>
                                     );
                                 })}
@@ -112,11 +134,17 @@ export default function Customers(){
                             </div>
                         </div>
                     </div>
-                    <div className="col-4">
+                    <div className="col-4" style={{ display: `${ showForm ? 'block' : 'none' }` }}>
                         {Helpers.authUser.user_role == null || perms.can_create === 1 || (parseInt(perms.can_update) === 1) ? 
                             <>
-                                <AddCustomer allCustomers={getCustomers} ref={addCustomerRef} />
-                                <AddTax />
+                                <AddCustomer setShowForm={setShowForm} allCustomers={getCustomers} ref={addCustomerRef} />
+                            </>
+                        : null}
+                    </div>
+                    <div className="col-4" style={{ display: `${ showTax ? 'block' : 'none' }` }}>
+                        {Helpers.authUser.user_role == null || perms.can_create === 1 || (parseInt(perms.can_update) === 1) ? 
+                            <>
+                                <AddTax setShowTax={setShowTax} />
                             </>
                         : null}
                     </div>

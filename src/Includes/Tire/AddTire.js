@@ -12,9 +12,10 @@ const options =  [
   {label:"New", value:'New', is_disabled: false},
   {label:"Used", value:'Used', is_disabled: false},
 ];
-const AddTire = forwardRef(({ getTires }, ref) => {
+const AddTire = forwardRef(({ getTires, setShowForm }, ref) => {
     let navigate = useNavigate();
     let tireInit = {
+        date: Helpers.currentDate(),
         brand_name: "",
         size: "",
         quantity: "",
@@ -46,6 +47,7 @@ const AddTire = forwardRef(({ getTires }, ref) => {
             setIsEditing(false);
             Helpers.toast("success", "Service saved successfully");
             setIsLoading(false);
+            setShowForm(false);
           })
           .catch((error) => {
             setErrors(Helpers.error_response(error));
@@ -60,7 +62,11 @@ const AddTire = forwardRef(({ getTires }, ref) => {
         }
     }));
 
-    const cancelSaving = () => {
+    const cancelSaving = e => {
+      e.preventDefault();
+        if(setShowForm){
+          setShowForm();
+        }
         setIsEditing(false);
         setSelectedCustomer({});
         setTire(tireInit);
@@ -107,7 +113,7 @@ const AddTire = forwardRef(({ getTires }, ref) => {
                     <div className="col-6">
                         <Button text={"Save Tire"} color={"success"} onClick={handleSaveTire} fullWidth={true} isLoading={isLoading} />
                     </div>
-                    {isEditing && <div className="col-6">
+                    {<div className="col-6">
                         <Button text={"Cancel"} color={"danger"} onClick={cancelSaving} fullWidth={true} />
                     </div>}
                 </div>

@@ -16,8 +16,10 @@ export default function PasswordUpdate(){
     const handleSavePassword = (e) => {
         e.preventDefault();
         setIsLoading(true);
-        setPassword({ ...password, _id: Helpers.authUser._id });
-        axios.post(`${Helpers.baseUrl}users/update-password`, password, Helpers.headers).then((response) => {
+        let data = password;
+        data._id = Helpers.authUser._id;
+        // setPassword({ ...password, _id: Helpers.authUser._id });
+        axios.post(`${Helpers.baseUrl}users/update-password`, data, Helpers.headers).then((response) => {
             setPassword(passwordInit);
             Helpers.toast("success", "Password Updated successfully");
             setIsLoading(false);
