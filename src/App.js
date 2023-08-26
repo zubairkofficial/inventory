@@ -27,6 +27,8 @@ import MonthlyReports from "./Screens/Reports/Monthly";
 import AnnuallyReports from "./Screens/Reports/Anually";
 import CustomerReceipts from "./Screens/Receipt/CustomerReceipts";
 
+import './App.css';
+
 function Auth({children}){
   let user = localStorage.getItem('user');
   let token = localStorage.getItem('token');

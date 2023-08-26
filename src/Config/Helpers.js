@@ -6,9 +6,9 @@ import axios from 'axios';
 
 class Helpers{
     static appName = "Inventory System";
-    static baseUrl = "//127.0.0.1:4000/";
+    static baseUrl = "//127.0.0.1:8001/";
     static publicPath = window.location.origin;
-    // static baseUrl = "http://3.80.216.93:3000/";
+    // static baseUrl = "http://3.80.216.93:8001/";
     static authUser = JSON.parse(localStorage.getItem('user'));
     
     static authParentId = this.authUser == null ? '' : parseInt(this.authUser.parent_id) === 0 ? this.authUser._id : this.authUser.parent_id;
@@ -154,6 +154,46 @@ class Helpers{
             return data;
         }
     }
+
+    static paginate = (data, perPage = 10) => {
+        let input = data;
+        let chunked = []
+        let size = perPage;
+
+        Array.from({length: Math.ceil(input.length / size)}, (val, i) => {
+            chunked.push(input.slice(i * size, i * size + size))
+        });
+
+        return chunked;
+    }
+
+    static currentDate = () => {
+        let date = new Date();
+
+        let year = date.getFullYear();
+        let month = String(date.getMonth() + 1).padStart(2, '0'); // Month is zero-based
+        let day = String(date.getDate()).padStart(2, '0');
+
+        let formattedDate = `${year}-${month}-${day}`;
+
+        return formattedDate;
+    }
+
+    static getCurrentDateTime = () => {
+        const now = new Date();
+      
+        const year = now.getFullYear();
+        const month = String(now.getMonth() + 1).padStart(2, '0');
+        const day = String(now.getDate()).padStart(2, '0');
+      
+        const hours = String(now.getHours()).padStart(2, '0');
+        const minutes = String(now.getMinutes()).padStart(2, '0');
+        const seconds = String(now.getSeconds()).padStart(2, '0');
+      
+        const formattedDateTime = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+      
+        return formattedDateTime;
+      }
 }
 
 export default Helpers;

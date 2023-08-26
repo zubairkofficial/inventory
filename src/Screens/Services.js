@@ -9,11 +9,14 @@ import CardHeader from "../Components/CardHeader";
 import ActionButton from "../Components/ActionButton";
 import { usePermissions } from "../Hooks/usePermissions";
 import AddService from "../Includes/Service/AddService";
+import Pagination from "../Components/Pagination";
 
 function Services() {
     const addServiceRef = useRef(null);
     const permissions = usePermissions();
   const [services, setServices] = useState([]);
+  const [paginated, setPaginated] = useState([]);
+  const [pageNo, setPageNo] = useState(0);
   const [data, setData] = useState([]);
   const [perms, setPerms] = useState([]);
 
@@ -22,8 +25,10 @@ function Services() {
     axios
       .get(`${Helpers.baseUrl}services/all/${Helpers.authParentId}`, Helpers.headers)
       .then((response) => {
-        setServices(response.data.reverse());
-        setData(response.data);
+        let data = response.data.reverse();
+        setServices(data);
+        setData(data);
+        setPaginated(Helpers.paginate(data));
       })
       .catch((error) => {
         Helpers.unauthenticated(error, navigate);
@@ -51,7 +56,7 @@ function Services() {
           <div className="col-8">
             <div className="card">
               <div className="card-body border-bottom">
-              <CardHeader setState={setServices} title={"All Services"} data={data} fields={["service_name", "description", "price"]} />
+              <CardHeader setState={setPaginated} paginate={true} setPageNo={setPageNo} title={"All Services"} data={data} fields={["service_name", "description", "price"]} />
                 <DataTable
                   columns={[
                     "Sr. #",
@@ -61,10 +66,10 @@ function Services() {
                     "Actions",
                   ]}
                 >
-                  {services.map((service, index) => {
+                  {paginated.length > 0 && paginated[pageNo].map((service, index) => {
                     return (
                       <tr key={service._id}>
-                        <td>{index + 1}</td>
+                        <td>{ (pageNo * 10) + (index + 1) }</td>
                         <td>{service.service_name}</td>
                         <td>{service.description}</td>
                         <td>$ {service.price}</td>
@@ -82,6 +87,7 @@ function Services() {
                     );
                   })}
                 </DataTable>
+                <Pagination paginated={paginated} pageNo={pageNo} setPageNo={setPageNo} />
                 {services.length === 0 ?<div className="text-center">
                   No data available to display
                 </div> : null}

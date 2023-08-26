@@ -1,29 +1,29 @@
 import { useState } from "react";
 import Helpers from "../Config/Helpers";
-import IconButton from "./IconButton";
 import Input from "./Input";
 
-export default function CardHeader({ setState, title, data, fields }){
+export default function CardHeader({ setState, title, data, fields, paginate = false, setPageNo }){
     const [query, setQuery] = useState('');
-    const handleSearch = e => {
-        e.preventDefault();
-        setState(Helpers.search(query, data, fields))
-    }
     const onInputSearch = inputQuery => {
-        setState(Helpers.search(inputQuery, data, fields))
+        if(paginate){
+            setState(Helpers.paginate(Helpers.search(inputQuery, data, fields)))
+            setPageNo(0);
+        }else{
+            setState(Helpers.search(inputQuery, data, fields))
+        }
     }
     const handleSearchChange = e => {
         if(e.target.value === ''){
-            setState(data);
+            if(paginate){
+                setState(Helpers.paginate(data));
+                setPageNo(0);
+            }else{
+                setState(data)
+            }
         }else{
             onInputSearch(e.target.value);
         }
         setQuery(e.target.value);
-    }
-    const cancelSearch = e => {
-        e.preventDefault();
-        setState(data);
-        setQuery('');
     }
     return (
         <div className="row" style={{ justifyContent: "center", alignItems: "center" }}>
@@ -33,15 +33,9 @@ export default function CardHeader({ setState, title, data, fields }){
             <div className="col-3">
                 <form>
                     <div className="row">
-                        <div className={ query ? "col-10" : "col-12" }>
+                        <div className="col-12">
                             <Input value={query} placeholder={"Seach here..."} onChange={handleSearchChange} />
                         </div>
-                        {/* <div className={ query ? "col-2" : "col-4" }>
-                            <IconButton icon={"search-outline"} text={query ? null : "Search"} color={"success"} onClick={handleSearch} topMartgin={false} />
-                        </div> */}
-                        {query && <div className="col-2">
-                            <IconButton icon={"close"} color={"warning"} onClick={cancelSearch} topMartgin={false} />
-                        </div>}
                     </div>
                 </form>
             </div>

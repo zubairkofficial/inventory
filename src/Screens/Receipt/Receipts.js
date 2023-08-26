@@ -49,7 +49,7 @@ export default function Receipts() {
                     children={<div>
                         <Link className="btn btn-light m-1" to="/user/receipts/unpaid">Unpaid Receipts</Link>
                         <Link className="btn btn-light m-1" to="/user/receipts/today">Today Receipts</Link>
-                        <Link className="btn btn-success m-1" to="/user/drafts"> Draft Receipts</Link>
+                        <Link className="btn btn-light m-1" to="/user/drafts"> Draft Receipts</Link>
                     </div>} 
                 />
                 <div className="row">

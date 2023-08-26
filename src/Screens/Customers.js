@@ -10,6 +10,7 @@ import ActionButton from "../Components/ActionButton";
 import CardHeader from "../Components/CardHeader";
 import { useTitle } from "../Hooks/useTitle";
 import AddTax from "../Includes/Customer/AddTax";
+import Pagination from "../Components/Pagination";
 
 export default function Customers(){
     const permissions = usePermissions();
@@ -17,6 +18,8 @@ export default function Customers(){
     useTitle("Customers");
 
     const [customers, setCustomers] = useState([]);
+    const [paginated, setPaginated] = useState([]);
+    const [pageNo, setPageNo] = useState(0);
     const [data, setData] = useState([]);
     const [perms, setPerms] = useState([]);
 
@@ -26,8 +29,10 @@ export default function Customers(){
         axios
           .get(`${Helpers.baseUrl}customers/all/${Helpers.authParentId}`, Helpers.headers)
           .then((response) => {
-              setCustomers(response.data.reverse());
-              setData(response.data);
+                let data = response.data.reverse();
+                setCustomers(data);
+                setData(data);
+                setPaginated(Helpers.paginate(data));
           })
           .catch((error) => {
             Helpers.unauthenticated(error, navigate);
@@ -56,50 +61,51 @@ export default function Customers(){
                     <div className="col-8">
                         <div className="card">
                             <div className="card-body border-bottom">
-                                <CardHeader title={"All Customers"} setState={setCustomers} data={data} fields={["name", "company_name", "phone", "email", "address"]} />
+                                <CardHeader title={"All Customers"} paginate={true} setState={setPaginated} setPageNo={setPageNo} data={data} fields={["name", "company_name", "phone", "email", "address"]} />
                                 <DataTable
-                                columns={[
-                                    "Sr. #",
-                                    "Customer Name",
-                                    "Company Name",
-                                    "Email",
-                                    "Phone",
-                                    "Address",
-                                    "Taxable",
-                                    "Actions",
-                                ]}
+                                    columns={[
+                                        "Sr. #",
+                                        "Customer Name",
+                                        "Company Name",
+                                        "Email",
+                                        "Phone",
+                                        "Address",
+                                        "Taxable",
+                                        "Actions",
+                                    ]}
                                 >
-                                {customers.map((customer, index) => {
+                                {paginated.length > 0 && paginated[pageNo].map((customer, index) => {
                                     return (
-                                    <tr key={customer._id}>
-                                        <td>{index + 1}</td>
-                                        <td>{customer.name}</td>
-                                        <td>{customer.company_name}</td>
-                                        <td>{customer.email}</td>
-                                        <td>{customer.phone}</td>
-                                        <td>{customer.address}</td>
-                                        <td>{customer.tax}</td>
-                                        <td>
-                                            <Link
-                                                to={`/user/receipts/customer/${customer.name}/${customer._id}`}
-                                                className="btn btn-warning btn-sm m-1"
-                                            >
-                                                <ion-icon name="eye-outline"></ion-icon>
-                                            </Link>
+                                        <tr key={customer._id}>
+                                            <td>{ (pageNo * 10) + (index + 1) }</td>
+                                            <td>{customer.name}</td>
+                                            <td>{customer.company_name}</td>
+                                            <td>{customer.email}</td>
+                                            <td>{customer.phone}</td>
+                                            <td>{customer.address}</td>
+                                            <td>{customer.tax}</td>
+                                            <td>
+                                                <Link
+                                                    to={`/user/receipts/customer/${customer.name}/${customer._id}`}
+                                                    className="btn btn-warning btn-sm m-1"
+                                                >
+                                                    <ion-icon name="eye-outline"></ion-icon>
+                                                </Link>
 
-                                        {
-                                            (Helpers.authUser.user_role == null || parseInt(perms.can_update) === 1) &&
-                                            <ActionButton icon={"create-outline"} color={"success"} onClick={() => hanldeEdit(customer)} />
-                                        }
-                                        {
-                                            (Helpers.authUser.user_role == null || parseInt(perms.can_delete) === 1) &&
-                                            <ActionButton icon={"trash-outline"} color={"danger"} onClick={() => handleDelete(customer._id)} />
-                                        }
-                                        </td>
-                                    </tr>
+                                            {
+                                                (Helpers.authUser.user_role == null || parseInt(perms.can_update) === 1) &&
+                                                <ActionButton icon={"create-outline"} color={"success"} onClick={() => hanldeEdit(customer)} />
+                                            }
+                                            {
+                                                (Helpers.authUser.user_role == null || parseInt(perms.can_delete) === 1) &&
+                                                <ActionButton icon={"trash-outline"} color={"danger"} onClick={() => handleDelete(customer._id)} />
+                                            }
+                                            </td>
+                                        </tr>
                                     );
                                 })}
                                 </DataTable>
+                                <Pagination paginated={paginated} pageNo={pageNo} setPageNo={setPageNo} />
                                 {customers.length === 0 ?<div className="text-center">
                                 No data available to display
                                 </div> : null}

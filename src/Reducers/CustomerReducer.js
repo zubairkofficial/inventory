@@ -34,7 +34,7 @@ export const customerReducer = (state, action) => {
             for (let index = 0; index < resData.length; index++) {
                 const service = {
                     _id: resData[index]._id,
-                    name: resData[index].brand + resData[index].size + " (" + resData[index].quality + ") ($" + resData[index].price + ")",
+                    name: resData[index].brand + resData[index].size + " (" + resData[index].quality + ")",
                     price: resData[index].price,
                     description: "",
                     quantity: resData[index].quantity,

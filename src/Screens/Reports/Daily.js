@@ -47,7 +47,6 @@ function DailyReports() {
       acc += receipt.remaining;
       return acc;
     }, 0);
-    console.log(sum);
     setTotalRemaining(sum);
   };
 
@@ -133,17 +132,22 @@ function DailyReports() {
   }
 
   const getReport = () => {
-    axios
-      .get(`${Helpers.baseUrl}reports/daily/${Helpers.authParentId}`, Helpers.headers)
-      .then((response) => {
-        setReport(response.data);
-        setReceipts(response.data.receipts.reverse() );
-        setCustomers(response.data.customers.reverse());
-        setVehicle(response.data.vehicles.reverse());
-      })
-      .catch((error) => {
-        Helpers.unauthenticated(error, navigate);
-      });
+    let today = new Date()
+    today.setHours(0, 0, 0, 0);
+    let today_start = today.toLocaleDateString()
+    console.log(today_start);
+    // let today = date.setUTCHours(0, 0, 0, 0)
+    // axios
+    //   .get(`${Helpers.baseUrl}reports/daily/${today_start}/${Helpers.authParentId}`, Helpers.headers)
+    //   .then((response) => {
+    //     setReport(response.data);
+    //     setReceipts(response.data.receipts.reverse() );
+    //     setCustomers(response.data.customers.reverse());
+    //     setVehicle(response.data.vehicles.reverse());
+    //   })
+    //   .catch((error) => {
+    //     Helpers.unauthenticated(error, navigate);
+    //   });
   };
 
   const calcPrice = (item) => {

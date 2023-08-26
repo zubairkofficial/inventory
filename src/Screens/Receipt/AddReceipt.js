@@ -14,7 +14,8 @@ import axios from "axios";
 
 export default function AddReceipt() {
   let receiptInit = {
-    date: new Date().toISOString().split("T")[0],
+    date: Helpers.currentDate(),
+    created_date: "",
     customer: "",
     technician: "",
     vehicle: "",
@@ -66,14 +67,14 @@ export default function AddReceipt() {
   let [selectedTires, setSelectedTires] = useState([]);
   //Technician
   let [technicianOptions, setTechnicianOptions] = useState();
-  let [selectedTechnician, setSelectedTechnician] = useState();
+  let [selectedTechnician, setSelectedTechnician] = useState([]);
   //payment status
   let statusOptions = [
     { label: "Unpaid", value: "Unpaid" },
     { label: "Partialy Paid", value: "Partialy Paid" },
     { label: "Paid", value: "Paid" },
   ];
-  let [selectedStatus, setSelectedStatus] = useState([]);
+  let [selectedStatus, setSelectedStatus] = useState("");
   //payment Types
   let paymentTypeOptions = [
     { label: "Cash", value: "Cash" },
@@ -81,7 +82,7 @@ export default function AddReceipt() {
     { label: "Check", value: "Check" },
     { label: "Online", value: "Online" },
   ];
-  let [selectedPaymentType, setSelectedPaymentType] = useState([]);
+  const [selectedPaymentType, setSelectedPaymentType] = useState("");
   //tax
   const [taxValue, setTaxValue] = useState([]);
   //Button Loading
@@ -150,6 +151,7 @@ export default function AddReceipt() {
 
   const handleTiresChange = (selected) => {
     setSelectedTires(selected);
+    
     const services = selectedServices.concat(selected);
     const uniqueServices = services.reduce((acc, service) => {
       const exists = acc.find((s) => s.label === service.label);
@@ -163,13 +165,27 @@ export default function AddReceipt() {
   };
 
   const handleTechnicianChange = (selected) => {
-    if (selected) {
-      setSelectedTechnician(selected);
-      setReceipt({ ...receipt, technician: selected.value });
-    } else {
-      setSelectedTechnician(null);
-      setReceipt({ ...receipt, technician: "" });
-    }
+    setSelectedTechnician(selected);
+    let techs = [];
+    selected.forEach(single => {
+      techs.push(single.value);
+    })
+    setReceipt({...receipt, technician: techs});
+    // const techs = selectedTechnician.concat(selected);
+    // const uniqueTechs = techs.reduce((acc, tech) => {
+    //   const exists = acc.find(t => t.label === tech.label);
+    //   if(!exists){
+    //     acc.push(tech);
+    //   }
+    //   return acc;
+    // }, []);
+    // if (selected) {
+    //   setSelectedTechnician(selected);
+    //   setReceipt({ ...receipt, technician: selected.value });
+    // } else {
+    //   setSelectedTechnician(null);
+    //   setReceipt({ ...receipt, technician: "" });
+    // }
   };
 
   const handleStatusChange = (selected) => {
@@ -235,6 +251,18 @@ export default function AddReceipt() {
     setReceipt({ ...receipt, note: note.target.value });
   };
 
+  const handleTaxChange = e => {
+      setReceipt({...receipt, taxType: e.target.value});
+      // if(!isNaN(value)){
+      //   setReceipt({...receipt, taxType: value});
+      //   
+      // }
+  }
+
+  useEffect(() => {
+    calculateTotalServices();
+  }, [receipt.taxType, selectedServices, receipt.taxIncluded, receipt.paid]);
+
   const calculateTotalServices = () => {
     let prices = 0;
     let taxPrice = 0;
@@ -280,12 +308,18 @@ export default function AddReceipt() {
 
   const handleSaveReceipt = (e) => {
     e.preventDefault();
+    // let date = new Date();
+    // console.log(date);
     setBtnLoading(true);
-
-    // const addOrUpdate = isEditing ? "update" : "add";
+    setErrors({});
+    let data = receipt;
+    receipt.created_date = Helpers.getCurrentDateTime()
+    // setReceipt({...receipt, created_date: Helpers.getCurrentDateTime});
+    // // const addOrUpdate = isEditing ? "update" : "add";
     axios
-      .post(`${Helpers.baseUrl}receipts/add`, receipt, Helpers.headers)
+      .post(`${Helpers.baseUrl}receipts/add`, data, Helpers.headers)
       .then((response) => {
+        // console.log(response.data);
         setReceipt(receiptInit);
         // setIsEditing(false);
         Helpers.toast("success", "Receipt saved successfully");
@@ -298,25 +332,29 @@ export default function AddReceipt() {
       });
   };
 
-  useEffect(() => {
-    if (receipt.isDraft) {
-      setBtnLoading(true);
-      //   const addOrUpdate = isEditing ? "update" : "add";
-      axios.post(`${Helpers.baseUrl}receipts/add`, receipt, Helpers.headers).then((response) => {
-          // setIsEditing(false);
-          Helpers.toast("success", "Receipt saved as Draft successfully");
-          setBtnLoading(false);
-          navigate("/user/drafts");
-      }).catch((error) => {
-          setErrors(Helpers.error_response(error));
-          setBtnLoading(false);
-      });
-    }
-  }, [receipt.isDraft]);
+  // useEffect(() => {
+  //   if (receipt.isDraft) {
+      
+  //   }
+  // }, [receipt.isDraft]);
 
   const handleSaveDraft = (e) => {
     e.preventDefault();
-    setReceipt({ ...receipt, isDraft: 1 });
+    setBtnLoading(true);
+    setErrors({});
+    let data = receipt;
+    data.isDraft = 1;
+    data.created_date = Helpers.getCurrentDateTime();
+    //   const addOrUpdate = isEditing ? "update" : "add";
+    axios.post(`${Helpers.baseUrl}receipts/add`, data, Helpers.headers).then((response) => {
+        // setIsEditing(false);
+        Helpers.toast("success", "Receipt saved as Draft successfully");
+        setBtnLoading(false);
+        navigate("/user/drafts");
+    }).catch((error) => {
+        setErrors(Helpers.error_response(error));
+        setBtnLoading(false);
+    });
   };
 
   useEffect(() => {
@@ -358,7 +396,7 @@ export default function AddReceipt() {
                         label={"Select Customer"}
                         options={customerOptions}
                         selected={selectedCustomer}
-                        error={errors.customer}
+                        error={selectedCustomer ? "" : errors.customer}
                         onChange={handleCustomerChange}
                         onBtnClick={() => setShowCustomerModal(true)}
                         targetModal={"addCustomerModal"}
@@ -367,7 +405,7 @@ export default function AddReceipt() {
                         label={"Select Vehicle"}
                         options={vehiclesOptions}
                         selected={selectedVehicle}
-                        error={errors.vehicle}
+                        error={selectedVehicle ? "" : errors.vehicle}
                         onChange={handleVehicleChange}
                         onBtnClick={() =>
                           receipt.customer
@@ -384,7 +422,7 @@ export default function AddReceipt() {
                         label={"Select Service"}
                         options={serviceOptions}
                         selected={selectedServices}
-                        error={errors.services}
+                        error={selectedServices.length === 0 ? errors.services : ""}
                         onChange={handleServicesChange}
                         onBtnClick={() => {}}
                         targetModal={"addServiceModal"}
@@ -401,22 +439,29 @@ export default function AddReceipt() {
                         hasBtn={false}
                       />
                       <AddSelectInput
-                        isMulti={false}
+                        isMulti={true}
                         label={"Select Technician"}
                         options={technicianOptions}
                         selected={selectedTechnician}
-                        error={errors.technician}
+                        error={selectedTechnician.length === 0 ? errors.technician : ""}
                         onChange={handleTechnicianChange}
                         onBtnClick={() => {}}
                         targetModal={"addServiceModal"}
                         hasBtn={false}
+                      />
+                      <Input
+                        label={"Tax"}
+                        value={receipt.taxType}
+                        onChange={handleTaxChange}
+                        placeholder={"Payment Paid"}
+                        type={"number"}
                       />
                       <AddSelectInput
                         isMulti={false}
                         label={"Select Payment Status"}
                         options={statusOptions}
                         selected={selectedStatus}
-                        error={errors.status}
+                        error={selectedStatus ? "" : errors.status}
                         onChange={handleStatusChange}
                         onBtnClick={() => {}}
                         targetModal={"addServiceModal"}
@@ -478,6 +523,7 @@ export default function AddReceipt() {
                             onClick={(event) => {
                               event.preventDefault();
                               setReceipt(receiptInit);
+                              navigate('/user/receipts');
                             }}
                             // isLoading={btnLoading}
                           />

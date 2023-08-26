@@ -52,7 +52,7 @@ const AddVehicleReceipt = ({ showModal = false, modalState, customer, handleVehi
             <Input label={"VIN Number"} value={vehicle.vin_number} placeholder={"VIN Number"} error={errors.vin_number} onChange={e => {
                 setVehicle({ ...vehicle, vin_number: e.target.value })
             }} />
-            <Input label={"Make Year"} value={vehicle.year} placeholder={"Make Year"} error={errors.year} onChange={e => {
+            <Input label={"Year"} value={vehicle.year} placeholder={"Year"} error={errors.year} onChange={e => {
                 setVehicle({ ...vehicle, year: e.target.value })
             }} />
             <Input label={"Make"} value={vehicle.name} placeholder={"Make"} error={errors.name} onChange={e => {
