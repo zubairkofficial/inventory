@@ -6,6 +6,7 @@ import Button from "../Components/Button";
 import axios from "axios";
 import { useState } from "react";
 import Helpers from "../Config/Helpers";
+import Invoice from "../Includes/Profile/Invoice";
 
 function ProfileSettings() {
     useTitle("Profile Settings");
@@ -80,6 +81,9 @@ function ProfileSettings() {
                 </div>
                 <div className="col-6">
                     <PasswordUpdate />
+                </div>
+                <div className="col-6">
+                    <Invoice />
                 </div>
             </div>
         </div>

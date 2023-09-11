@@ -93,6 +93,7 @@ export default function AddReceipt() {
   const [showVehilcleModal, setShowVehilcleModal] = useState(false);
   const [showServiceModal, setShowServiceModal] = useState(false);
 
+
   const handleCustomerChange = (selected) => {
     console.log(selected);
     if (selected) {
@@ -123,12 +124,12 @@ export default function AddReceipt() {
   };
 
   const handleVehicleChange = (selected) => {
-    if (selected) {
-      setSelectedVehicle(selected);
-    } else {
-      setSelectedVehicle(null);
-    }
-    setReceipt({ ...receipt, vehicle: selected ? selected.value : "" });
+      if (selected) {
+        setSelectedVehicle(selected);
+      } else {
+        setSelectedVehicle(null);
+      }
+      setReceipt({ ...receipt, vehicle: selected ? selected.value : "" });
   };
 
   const handleServicesChange = (selected) => {
@@ -310,7 +311,7 @@ export default function AddReceipt() {
     e.preventDefault();
     // let date = new Date();
     // console.log(date);
-    setBtnLoading(true);
+    setBtnLoading(false);
     setErrors({});
     if(receipt.services){
       if(receipt.status){
@@ -334,7 +335,14 @@ export default function AddReceipt() {
         setErrors({...errors, services: "Payment status is required"});
       }
     }else{
-      setErrors({...errors, services: "Services field is required"});
+      setErrors({...errors, 
+        services: "Services field is required",
+        vehicle: "Vehicle is required",
+        customer: "Customer is required",
+        technician: "Vehicle is required",
+        status: "Status is required",
+        paymentType: "Payment Type is required"
+      });
     }
   };
 
@@ -346,7 +354,7 @@ export default function AddReceipt() {
 
   const handleSaveDraft = (e) => {
     e.preventDefault();
-    setBtnLoading(true);
+    setBtnLoading(false);
     setErrors({});
     let data = receipt;
     data.isDraft = 1;
@@ -361,6 +369,15 @@ export default function AddReceipt() {
         setErrors(Helpers.error_response(error));
         setBtnLoading(false);
     });
+  };
+
+  const [inputText, setInputText] = useState("");
+
+  const handleInputChange = (inputText, meta) => {
+    debugger;
+    if (meta.action !== "input-blur" && meta.action !== "menu-close") {
+      setInputText(inputText);
+    }
   };
 
   useEffect(() => {
@@ -405,7 +422,10 @@ export default function AddReceipt() {
                         error={selectedCustomer ? "" : errors.customer}
                         onChange={handleCustomerChange}
                         onBtnClick={() => setShowCustomerModal(true)}
-                        targetModal={"addCustomerModal"}
+                        targetModal={"addCustomerModal"}                        
+                        /*Search Query Params */
+                        onInputChange={handleInputChange}
+                        input={inputText}
                       />
                       <AddSelectInput
                         label={"Select Vehicle"}
@@ -418,7 +438,7 @@ export default function AddReceipt() {
                             ? setShowVehilcleModal(true)
                             : Helpers.toast(
                                 "error",
-                                "Choose a customer to add vehilce"
+                                "Choose a customer to add vehicle"
                               )
                         }
                         targetModal={"addVehicleModal"}
