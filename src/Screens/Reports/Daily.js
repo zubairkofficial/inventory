@@ -7,11 +7,18 @@ import "izitoast-react/dist/iziToast.css";
 import { useTitle } from "../../Hooks/useTitle";
 import { usePermissions } from "../../Hooks/usePermissions";
 import ReportIcon from "../../Components/ReportIcon";
+import "react-daterange-picker/dist/css/react-calendar.css";
+import moment from 'moment';
+import DateRangePicker from 'react-bootstrap-daterangepicker';
 
 function DailyReports() {
-    useTitle("Todays Reports");
-  const current_url = useLocation();
 
+  useTitle("Todays Reports");
+
+  let today = Helpers.currentDate();
+  const current_url = useLocation();
+  const [startDate, setStartDate] = useState();
+  const [endDate, setEndDate] = useState();
   const [report, setReport] = useState([]);
   const [receipts, setReceipts] = useState([]);
   const [customers, setCustomers] = useState([]);
@@ -29,10 +36,34 @@ function DailyReports() {
   const [totalRemaining, setTotalRemaining] = useState(0);
   const user_id = Helpers.authParentId;
   const [allReceipts, setAllReceipts] = useState([]);
-
-  let navigate = useNavigate();
-  const getAllReceipts = () => {
-    axios
+  const [url, setUrl] = useState(`${Helpers.baseUrl}reports/daily/${today}/${Helpers.authParentId}`)
+  
+  
+  
+  const handleDateRangeApply = (event, picker) => {
+    let endDate = moment(picker.startDate.toDate()).format('YYYY-MM-DD');
+    let startDate = moment(picker.endDate.toDate()).format('YYYY-MM-DD');
+    
+    const date = moment(picker.endDate.toDate());
+    const currentDate = moment();
+    const nextDate = moment(currentDate).add(1, 'days');
+    
+    
+    if (!(date.isAfter(nextDate))) {
+      setStartDate(endDate)
+      setEndDate(startDate)
+      setUrl(`${Helpers.baseUrl}reports/weekly/${endDate}/${startDate}/${Helpers.authParentId}`)
+    } else {
+      Helpers.toast(
+        "error",
+        "Please select the date before Current date"
+        )
+      }
+    }
+    
+    let navigate = useNavigate();
+    const getAllReceipts = () => {
+      axios
       .get(`${Helpers.baseUrl}receipts/all/${Helpers.authParentId}`, Helpers.headers)
       .then((response) => {
         setAllReceipts(response.data.reverse());
@@ -67,6 +98,7 @@ function DailyReports() {
     if (receipts.length > 0) {
       count = receipts.map(receipt => receipt.services).reduce((acc, service)=>{
         service.map(item =>{
+          if (item && item.value && item.value._id)
             acc[item.value._id] = (acc[item.value._id]||0)+1;
         });
         // count[label] = (count[label] ||0)+1;
@@ -81,7 +113,7 @@ function DailyReports() {
 
   const salesToDealers = () => {
     if (receipts.length > 0) {
-    var sum = receipts.reduce(function(acc, receipt) {
+      var sum = receipts.reduce(function(acc, receipt) {
       if (receipt.customer.tax === 'Non Taxable') {
           acc += receipt.totalPrice;
       }
@@ -131,36 +163,101 @@ function DailyReports() {
     // console.log('');
   }
 
+
+
   const getReport = () => {
-    let today = Helpers.currentDate();
-    axios
-      .get(`${Helpers.baseUrl}reports/daily/${today}/${Helpers.authParentId}`, Helpers.headers)
+    if(startDate && endDate){
+      axios
+      // .get(`${Helpers.baseUrl}reports/daily/${today}/${Helpers.authParentId}`, Helpers.headers)
+      .get(`${Helpers.baseUrl}reports/weekly/${endDate}/${startDate}/${Helpers.authParentId}`, Helpers.headers)
+      // .get(`${url}`, Helpers.headers)
       .then((response) => {
         setReport(response.data);
         setReceipts(response.data.receipts.reverse() );
-        setCustomers(response.data.customers.reverse());
-        setVehicle(response.data.vehicles.reverse());
-      })
-      .catch((error) => {
-        Helpers.unauthenticated(error, navigate);
-      });
-  };
-
-  const calcPrice = (item) => {
-    let total = 0;
-    for (let index = 0; index < item.length; index++) {
-      total += item[index].totalPrice;
-    }
-    return total.toFixed(2);
-  };
-
-  useEffect(() => {
-    getReport();
-    getServices();
-    getAllReceipts();
-  }, []);
-  
-  useEffect(() => {
+                //   Customer
+                let customers = [];
+                for (let i = 0; i < response.data.receipts.length; i++) {
+                    let customer = response.data.receipts[i].customer;
+                    let existingCustomer = customers.find(c => c.name === customer.name && c.number === customer.number);
+            if (!existingCustomer) {
+                customers.push(customer);
+            }
+                }
+                customers.reverse();
+                setCustomers(customers);
+                
+                // Vehicles
+                let vehicles = [];
+                for (let i = 0; i < response.data.receipts.length; i++) {
+                    let vehicle = response.data.receipts[i].vehicle;
+                    let existingVehicle = vehicles.find(c => c.name === vehicle.name && c.model === vehicle.model);
+                    if (!existingVehicle) {
+                      vehicles.push(vehicle);
+                    }
+                  }
+                  vehicles.reverse();
+                  setVehicle(vehicles);
+                  
+                })
+                .catch((error) => {
+                  Helpers.unauthenticated(error, navigate);
+                });
+              }else{
+                axios
+      .get(`${Helpers.baseUrl}reports/daily/${today}/${Helpers.authParentId}`, Helpers.headers)
+      // .get(`${Helpers.baseUrl}reports/weekly/${endDate}/${startDate}/${Helpers.authParentId}`, Helpers.headers)
+      // .get(`${url}`, Helpers.headers)
+      .then((response) => {
+        setReport(response.data);
+        setReceipts(response.data.receipts.reverse() );
+        //   Customer
+        let customers = [];
+        for (let i = 0; i < response.data.receipts.length; i++) {
+          let customer = response.data.receipts[i].customer; 
+          let existingCustomer = customers.find(c => c.name === customer.name && c.number === customer.number);
+          if (!existingCustomer) {
+            customers.push(customer);
+          }
+        }
+        customers.reverse();
+        setCustomers(customers);
+        
+        // Vehicles
+        let vehicles = [];
+        for (let i = 0; i < response.data.receipts.length; i++) {
+          let vehicle = response.data.receipts[i].vehicle;
+          let existingVehicle = vehicles.find(c => c.name === vehicle.name && c.model === vehicle.model);
+          if (!existingVehicle) {
+            vehicles.push(vehicle);
+            let customer = response.data.receipts[i].customer;
+          }
+        }
+        vehicles.reverse();
+                  setVehicle(vehicles);
+                  
+                })
+                .catch((error) => {
+                  Helpers.unauthenticated(error, navigate);
+                });
+              }
+            };
+            
+            const calcPrice = (item) => {
+              let total = 0;
+              for (let index = 0; index < item.length; index++) {
+                total += item[index].totalPrice;
+              }
+              return total.toFixed(2);
+            };
+            
+            useEffect(() => {
+              getReport();
+              getServices();
+              getAllReceipts();
+              // console.log(allReceipts)
+            }, [ startDate, endDate, setUrl]);
+            
+            useEffect(() => {
     calcTotalRemaining();
   }, [allReceipts]);
 
@@ -183,6 +280,10 @@ function DailyReports() {
           <div className="col-12">
             <div className="page-title-box d-sm-flex align-items-center justify-content-between">
               <h4 className="mb-sm-0">Today's Report</h4>
+              <DateRangePicker onApply={handleDateRangeApply} 
+              >
+              <button className="btn btn-success">Filter by Date</button>
+              </DateRangePicker>
             </div>
           </div>
         </div>
@@ -234,14 +335,14 @@ function DailyReports() {
                       <td>$ {totalTax}</td>
                     </tr>
                     <tr>
-                      <td>Gross Sales</td>
-                      <td>---</td>
-                      <td>$ {netSale - totalDiscount - totalTax}</td>
-                    </tr>
-                    <tr>
                       <td>Net Sales</td>
                       <td>---</td>
-                      <td>$ {netSale}</td>
+                      <td>$ {netSale - totalTax}</td>
+                    </tr>
+                    <tr>
+                      <td>Gross Sales</td>
+                      <td>---</td>
+                      <td>$ {netSale - totalDiscount}</td>
                     </tr>
                     <tr>
                       <td>Total Paid w/ Cash</td>

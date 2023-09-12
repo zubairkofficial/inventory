@@ -1,3 +1,5 @@
+import 'bootstrap/dist/css/bootstrap.css';
+import 'bootstrap-daterangepicker/daterangepicker.css';
 import Login from "./Screens/Auth/Login";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { Navigate } from "react-router-dom";
@@ -72,8 +74,8 @@ function App() {
           <Route path='/user/receipts/drafts-edit/:receipt_id' element={<Auth><EditDraft /></Auth>}></Route>
           <Route path='/user/reports/daily' element={<Auth><DailyReports /></Auth>}></Route>
           <Route path='/user/reports/weekly' element={<Auth><WeeklyReports /></Auth>}></Route>
-          <Route path='/user/reports/monthly' element={<Auth><MonthlyReports /></Auth>}></Route>
-          <Route path='/user/reports/annually' element={<Auth><AnnuallyReports /></Auth>}></Route>
+          {/* <Route path='/user/reports/monthly' element={<Auth><MonthlyReports /></Auth>}></Route> */}
+          {/* <Route path='/user/reports/annually' element={<Auth><AnnuallyReports /></Auth>}></Route> */}
           <Route path="/user/profile-settings" element={<Auth><ProfileSettings /></Auth>} />
           <Route path="/user/roles" element={<Auth><Roles /></Auth>} />
           <Route path="/user/manage-permissions/:role_name/:role_id" element={<Auth><Permissions /></Auth>} />

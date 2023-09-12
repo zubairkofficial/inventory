@@ -93,8 +93,8 @@ export default function AddReceipt() {
   const [showVehilcleModal, setShowVehilcleModal] = useState(false);
   const [showServiceModal, setShowServiceModal] = useState(false);
 
+
   const handleCustomerChange = (selected) => {
-    console.log(selected);
     if (selected) {
       setSelectedCustomer(selected);
       // if (selected.value.tax === "Taxable") {
@@ -123,12 +123,12 @@ export default function AddReceipt() {
   };
 
   const handleVehicleChange = (selected) => {
-    if (selected) {
-      setSelectedVehicle(selected);
-    } else {
-      setSelectedVehicle(null);
-    }
-    setReceipt({ ...receipt, vehicle: selected ? selected.value : "" });
+      if (selected) {
+        setSelectedVehicle(selected);
+      } else {
+        setSelectedVehicle(null);
+      }
+      setReceipt({ ...receipt, vehicle: selected ? selected.value : "" });
   };
 
   const handleServicesChange = (selected) => {
@@ -310,7 +310,7 @@ export default function AddReceipt() {
     e.preventDefault();
     // let date = new Date();
     // console.log(date);
-    setBtnLoading(true);
+    setBtnLoading(false);
     setErrors({});
     if(receipt.services){
       if(receipt.status){
@@ -334,7 +334,14 @@ export default function AddReceipt() {
         setErrors({...errors, services: "Payment status is required"});
       }
     }else{
-      setErrors({...errors, services: "Services field is required"});
+      setErrors({...errors, 
+        services: "Services field is required",
+        vehicle: "Vehicle is required",
+        customer: "Customer is required",
+        technician: "Vehicle is required",
+        status: "Status is required",
+        paymentType: "Payment Type is required"
+      });
     }
   };
 
@@ -346,13 +353,15 @@ export default function AddReceipt() {
 
   const handleSaveDraft = (e) => {
     e.preventDefault();
-    setBtnLoading(true);
+    setBtnLoading(false);
     setErrors({});
     let data = receipt;
     data.isDraft = 1;
     data.created_date = Helpers.getCurrentDateTime();
     //   const addOrUpdate = isEditing ? "update" : "add";
-    axios.post(`${Helpers.baseUrl}receipts/add`, data, Helpers.headers).then((response) => {
+    if(receipt.customer){
+
+      axios.post(`${Helpers.baseUrl}receipts/add`, data, Helpers.headers).then((response) => {
         // setIsEditing(false);
         Helpers.toast("success", "Receipt saved as Draft successfully");
         setBtnLoading(false);
@@ -361,6 +370,22 @@ export default function AddReceipt() {
         setErrors(Helpers.error_response(error));
         setBtnLoading(false);
     });
+  }else{
+    setErrors({
+      ...errors,
+      customer: "Customer is required",
+    })
+  }
+}
+
+
+  const [inputText, setInputText] = useState("");
+
+  const handleInputChange = (inputText, meta) => {
+    debugger;
+    if (meta.action !== "input-blur" && meta.action !== "menu-close") {
+      setInputText(inputText);
+    }
   };
 
   useEffect(() => {
@@ -405,7 +430,10 @@ export default function AddReceipt() {
                         error={selectedCustomer ? "" : errors.customer}
                         onChange={handleCustomerChange}
                         onBtnClick={() => setShowCustomerModal(true)}
-                        targetModal={"addCustomerModal"}
+                        targetModal={"addCustomerModal"}                        
+                        /*Search Query Params */
+                        onInputChange={handleInputChange}
+                        input={inputText}
                       />
                       <AddSelectInput
                         label={"Select Vehicle"}
@@ -418,7 +446,7 @@ export default function AddReceipt() {
                             ? setShowVehilcleModal(true)
                             : Helpers.toast(
                                 "error",
-                                "Choose a customer to add vehilce"
+                                "Choose a customer to add vehicle"
                               )
                         }
                         targetModal={"addVehicleModal"}
@@ -444,7 +472,7 @@ export default function AddReceipt() {
                         targetModal={"addServiceModal"}
                         hasBtn={false}
                       />
-                      <AddSelectInput
+                      {/* <AddSelectInput
                         isMulti={true}
                         label={"Select Technician"}
                         options={technicianOptions}
@@ -454,12 +482,12 @@ export default function AddReceipt() {
                         onBtnClick={() => {}}
                         targetModal={"addServiceModal"}
                         hasBtn={false}
-                      />
+                      /> */}
                       <Input
                         label={"Tax"}
                         value={receipt.taxType}
                         onChange={handleTaxChange}
-                        placeholder={"Payment Paid"}
+                        placeholder={"Tax"}
                         type={"number"}
                       />
                       <AddSelectInput
@@ -593,6 +621,7 @@ export default function AddReceipt() {
                                   <thead>
                                     <tr>
                                       <th>Service</th>
+                                      <th>Technician</th>
                                       <th>Unit Price</th>
                                       <th>Qty.</th>
                                       <th>Total Price</th>
@@ -602,6 +631,7 @@ export default function AddReceipt() {
                                 <tbody>
                                   {receipt.services &&
                                     receipt.services.map((service, i) => (
+                                      <>
                                       <tr key={i}>
                                         <td>
                                           {service.value.name}{" "}
@@ -620,12 +650,15 @@ export default function AddReceipt() {
                                           </span>{" "}
                                           <br />
                                         </td>
+                                        <td>{service.value.technicianName}</td>
                                         <td>${service.value.price}</td>
                                         <td>{service.value.quantity}</td>
                                         <td>${service.value.total_price}</td>
                                       </tr>
+                                      </>
                                     ))}
                                   {receipt.taxIncluded == true ? (
+                                      <>
                                     <tr>
                                       <th>SubTotal</th>
                                       <th></th>
@@ -640,6 +673,7 @@ export default function AddReceipt() {
                                         ).toFixed(2)}
                                       </th>
                                     </tr>
+                                      </>
                                   ) : null}
                                   {receipt.tiresTax != 0 ? (
                                     <tr>
@@ -709,6 +743,7 @@ export default function AddReceipt() {
           modalState={setShowCustomerModal}
           handleCustomerChange={handleCustomerChange}
           setCustomersOptions={setCustomersOptions}
+          searchCustomer={inputText}
         />
         <AddVehicleReceipt
           showModal={showVehilcleModal}

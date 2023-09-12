@@ -17,6 +17,8 @@ export default function ReceiptDetails() {
   const [receipt, setReceipt] = useState([]);
   const { receipt_id } = useParams();
   const { show, setShow } = useState(false);
+  const [image, setImageSrc] = useState(Helpers.authUser.profile);
+
   let navigate = useNavigate();
   const getReceipt = () => {
     axios
@@ -65,6 +67,19 @@ export default function ReceiptDetails() {
   useEffect(() => {
     getReceipt();
   }, []);
+  
+  useEffect(()=>{
+    // setImageSrc(`${Helpers.baseUrl}uploads/${Helpers.authUser.profile}`);
+  }, [receipt])
+
+  // useEffect(()=>{
+  //   axios.get(`${Helpers.baseUrl}uploads/${Helpers.authUser.profile}`)
+  //   .then((response)=>{
+  //     console.log(response)
+  //   }).catch((error)=>{
+  //     console.log(error)
+  //   })
+  // }, [])
 
   return (
     <div className="page-content">
@@ -101,21 +116,37 @@ export default function ReceiptDetails() {
                     <div className="d-flex">
                       <div className="flex-grow-1">
                         <img
-                          src={`${Helpers.baseUrl}uploads/${Helpers.authUser.profile}`}
+                          src={`${Helpers.baseUrl}uploads/${image}`}
+                          // src={image}
                           className="card-logo card-logo-dark"
                           alt="logo dark"
-                          height="17"
+                          style={{
+                            maxWidth: '100px',
+                            maxHeight: '80px',
+                            width: 'auto',
+                            height: 'auto'
+                          }} 
                         />
-                        <div className="mt-3">
-                          #<span id="invoice-no">{receipt._id}</span>
+                  <div className="col-lg-12 col-12 text-right">
+                    <p className="text-muted mb-2 text-uppercase fw-semibold m-1" style={{ display: "inline-block" }}>
+                      Date
+                    </p>
+                    <h5 className="fs-14 mb-0 m-1 invoice-date" style={{ display: "inline-block" }}>
+                      <span id="invoice-date">
+                        <Moment date={receipt.date} format="ddd, MMM Do YYYY" />
+                      </span>{" "}
+                    </h5>
+                  </div>
+                        <div className="mt-3 text-right">
+                          #<span id="invoice-no">{receipt.invoice}</span>
                         </div>
                       </div>
                     </div>
                   </div>
                 </div>
-                <div className="col-lg-12">
-                  <div className="card-body p-4">
-                    <div className="row g-3">
+                {/* <div className="col-lg-12">
+                  <div className="card-body p-4"> */}
+                    {/* <div className="row g-3"> */}
                       {/* <div className="col-lg-3 col-6">
                         <p className="text-muted mb-2 text-uppercase fw-semibold m-1" style={{ display: "inline-block" }}>
                           Invoice No
@@ -124,16 +155,6 @@ export default function ReceiptDetails() {
                           #<span id="invoice-no">{receipt._id}</span>
                         </h5>
                       </div> */}
-                      <div className="col-lg-12 col-12 text-right">
-                        <p className="text-muted mb-2 text-uppercase fw-semibold m-1" style={{ display: "inline-block" }}>
-                          Date
-                        </p>
-                        <h5 className="fs-14 mb-0 m-1 invoice-date" style={{ display: "inline-block" }}>
-                          <span id="invoice-date">
-                            <Moment date={receipt.date} format="ddd, MMM Do YYYY" />
-                          </span>{" "}
-                        </h5>
-                      </div>
                       {/* <div className="col-lg-3 col-6 hide-on-print">
                         <p className="text-muted mb-2 text-uppercase fw-semibold">
                           Payment Status
@@ -159,9 +180,9 @@ export default function ReceiptDetails() {
                           $<span id="total-amount">{receipt.totalPrice}</span>
                         </h5>
                       </div> */}
-                    </div>
-                  </div>
-                </div>
+                    {/* </div> */}
+                  {/* </div>
+                </div> */}
                 <div className="col-lg-12">
                   <div className="card-body p-4 border-top border-top-dashed">
                     <div className="row g-3">
@@ -172,12 +193,12 @@ export default function ReceiptDetails() {
                         <p className="fw-medium mb-2" id="billing-name">
                           {receipt.customer ? receipt.customer.name : ""}
                         </p>
-                        <p
+                        {/* <p
                           className="text-muted mb-1"
                           id="billing-address-line-1"
                         >
                           {receipt.customer ? receipt.customer.address : ""}
-                        </p>
+                        </p> */}
                         <p className="text-muted mb-1">
                           <span>Phone: </span>
                           <span id="billing-phone-no">
@@ -203,7 +224,11 @@ export default function ReceiptDetails() {
                           </p> : ''
                         }
                       </div>
-                      <div className="col-4">
+                      {/* Just some space */}
+                      <div className="col-5">
+
+                      </div>
+                      <div className="col-2">
                         <h6 className="text-muted text-uppercase fw-semibold mb-3">
                           Vehicle Details
                         </h6>
@@ -236,7 +261,9 @@ export default function ReceiptDetails() {
                           </span>
                         </p>
                       </div>
-                      <div className="col-3 text-right">
+
+                      {/* Technician Details */}
+                      {/* <div className="col-3 text-right">
                         <h6 className="text-muted text-uppercase fw-semibold mb-3">
                           Technician Details
                         </h6>
@@ -260,7 +287,7 @@ export default function ReceiptDetails() {
                             </div>
                           );
                         })}
-                      </div>
+                      </div> */}
                     </div>
                   </div>
                 </div>
@@ -271,9 +298,12 @@ export default function ReceiptDetails() {
                         <thead>
                           <tr className="table-active">
                             <th scope="col" className="text-start">Service Details</th>
-                            <th scope="col"></th>
-                            <th scope="col"></th>
+                            {/* <th scope="col">Description</th> */}
+                            <th scope="col">Technician</th>
+                            <th scope="col">Qty</th>
+                            <th scope="col">List</th>
                             <th scope="col" className="text-end">
+                              Extended
                             </th>
                           </tr>
                         </thead>
@@ -284,7 +314,11 @@ export default function ReceiptDetails() {
                                   <tr>
                                     <td className="text-start">
                                       <span className="fw-medium">
-                                        {service.value.name}
+                                        {service.value.name}<br/>
+                                        <span className="text-muted">{service.value.description
+                                        .split(", ")
+                                        .join(",\n")
+                                        }</span>
                                       </span>
                                       <span className="text-muted">
                                         <small>
@@ -295,14 +329,25 @@ export default function ReceiptDetails() {
                                       </span>{" "}
                                       
                                       <br />
-                                      <div style={{whiteSpace: 'pre-wrap'}}>
+                                      {/* <div style={{whiteSpace: 'pre-wrap'}}>
                                         <span className="text-muted" >
                                           {service.value.description.split(", ").join(",\n")}
                                         </span>
-                                      </div>
+                                      </div> */}
                                     </td>
-                                    <td>$ {service.value.price}</td>
+                                    {/* <td>
+                                      {service.value.description
+                                        .split(", ")
+                                        .join(",\n")}
+                                    </td> */}
+                                    <td>
+                                      {service.value.technicianName}
+                                    </td>
+                                    <td className="fw-bold">
+                                      {service.value.technician}
+                                    </td>
                                     <td>{service.value.quantity}</td>
+                                    <td>$ {service.value.pricePerQuartz}</td>
                                     <td className="text-end">
                                       $ {service.value.total_price}
                                     </td>

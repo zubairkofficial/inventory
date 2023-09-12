@@ -4,8 +4,9 @@ import PasswordUpdate from "../Includes/Profile/PasswordUpdate";
 import { useTitle } from "../Hooks/useTitle";
 import Button from "../Components/Button";
 import axios from "axios";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Helpers from "../Config/Helpers";
+import Invoice from "../Includes/Profile/Invoice";
 
 function ProfileSettings() {
     useTitle("Profile Settings");
@@ -14,7 +15,7 @@ function ProfileSettings() {
     const [imgSrc, setImageSrc] = useState(Helpers.authUser.profile);
     const [isLoading, setIsLoading] = useState(false);
 
-    const handleFileChange = (event) => {
+    const handleFileChange = async (event) => {
         let file = event.target.files[0];
         setSelectedFile(file);
         setImageSrc(URL.createObjectURL(file));
@@ -26,7 +27,6 @@ function ProfileSettings() {
 
 
         if (!selectedFile) {
-            console.error("No image selected.");
             setIsLoading(false);
             return;
         }
@@ -34,18 +34,24 @@ function ProfileSettings() {
         const formData = new FormData();
         formData.append("image", selectedFile);
         formData.append("user_id", Helpers.authUser._id);
-        axios.post(`${Helpers.baseUrl}users/upload`, formData, Helpers.imageHeaders).then(response => {
+        await axios.post(`${Helpers.baseUrl}users/upload`, formData, Helpers.imageHeaders).then( (response) => {
             Helpers.toast("success", response.data.message);
-            localStorage.setItem('user', JSON.stringify(response.data.user));
             setIsLoading(false);
-            // setTimeout(() => {
-            //     window.location.reload();
-            // }, 1000);
+            setTimeout(() => {
+                window.location.reload();
+                localStorage.setItem('user', JSON.stringify(response.data.user));
+                // setIsLoading(false)
+            }, 100);
+            
         }).catch(error => {
+            // console.log(error)
             Helpers.toast("error", "Error uploading image");
             setIsLoading(true);
         })
     };
+
+    
+    
 
   return (
     <div className="page-content">
@@ -80,6 +86,9 @@ function ProfileSettings() {
                 </div>
                 <div className="col-6">
                     <PasswordUpdate />
+                </div>
+                <div className="col-6">
+                    <Invoice />
                 </div>
             </div>
         </div>

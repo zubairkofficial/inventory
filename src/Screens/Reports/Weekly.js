@@ -27,6 +27,8 @@ function WeeklyReports() {
     axios
       .get(`${Helpers.baseUrl}reports/weekly/${current}/${week_before}/${Helpers.authParentId}`, Helpers.headers)
       .then((response) => {
+        // Current date
+        // Week Date
         setReport(response.data);
         setReceipts(response.data.receipts.reverse());
         setCustomers(response.data.customers.reverse());
@@ -133,6 +135,8 @@ function WeeklyReports() {
                 </div> : null}    
             </div>
         </div>
+
+
 
         <div className="card" id="contactList">
             <div className="card-body">

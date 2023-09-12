@@ -1,4 +1,4 @@
-import { useState, useReducer } from "react";
+import { useState, useReducer, useEffect } from "react";
 import Helpers from "../../Config/Helpers";
 import Modal from "../Modal";
 import Input from "../Input";
@@ -8,11 +8,11 @@ import { customerReducer } from "../../Reducers/CustomerReducer";
 import axios from "axios";
 import $ from 'jquery'
 
-const AddCustomer = ({ showModal = false, modalState, handleCustomerChange, setCustomersOptions }) => {
+const AddCustomer = ({ showModal = false, modalState, handleCustomerChange, setCustomersOptions, searchCustomer, }) => {
     let customerInit = {
-        name: "",
+        name: searchCustomer && isNaN(searchCustomer) ? searchCustomer : "",
         email: "",
-        phone: "",
+        phone: searchCustomer && !isNaN(searchCustomer) ? searchCustomer : "",
         address: "",
         company_name: "",
         tax: "Taxable",
@@ -29,22 +29,27 @@ const AddCustomer = ({ showModal = false, modalState, handleCustomerChange, setC
     const [isLoading, setIsLoading] = useState(false);
 
     const [reucerCustomer, dispatch] = useReducer(customerReducer, customerInit);
-
     const handleSaveCustomer = (e) => {
         e.preventDefault();
         setIsLoading(true);
         setErrors({});
         const addOrUpdate = "add";
-        axios.post(`${Helpers.baseUrl}customers/${addOrUpdate}`,customer,Helpers.headers).then((response) => {
+        axios
+          .post(
+            `${Helpers.baseUrl}customers/${addOrUpdate}`,
+            customer,
+            Helpers.headers
+          )
+          .then((response) => {
             let selectedCustomer = {
               label: response.data.name + " (" + response.data.phone + ")",
               value: response.data,
             };
             handleCustomerChange(selectedCustomer);
             // setSelectedCustomer(selectedCustomer);
-            dispatch({ type: 'getCustomers', states: { setCustomersOptions } })
+            dispatch({ type: "getCustomers", states: { setCustomersOptions } });
             modalState(false);
-            $('.modal-backdrop').hide();
+            $(".modal-backdrop").hide();
             setCustomer(customerInit);
             Helpers.toast("success", "Customer saved successfully");
             setIsLoading(false);
@@ -54,7 +59,16 @@ const AddCustomer = ({ showModal = false, modalState, handleCustomerChange, setC
             setIsLoading(false);
             // setIsCustomerModelVisible(false)
           });
-    };
+      };
+      useEffect(() => {
+        // Update the customer object when the searchCustomer prop changes
+        console.log(searchCustomer, " Add customer");
+        setCustomer({
+          ...customerInit,
+          name: searchCustomer && isNaN(searchCustomer) ? searchCustomer : "",
+          phone: searchCustomer && !isNaN(searchCustomer) ? searchCustomer : "",
+        });
+      }, [searchCustomer]);
     return (
         <Modal show={showModal} showModalState={modalState} modalId={"addCustomerModal"} modalTitle={"Add New Customer"} >
             <Input label={"Customer Name"} placeholder={"Customer Name"} error={errors.name} value={customer.name} onChange={e => setCustomer({ ...customer, name: e.target.value })} />

@@ -30,7 +30,7 @@ const AddVehicleReceipt = ({ showModal = false, modalState, customer, handleVehi
         const addOrUpdate = "add";
         vehicle.customer = customer.value;
         axios.post(`${Helpers.baseUrl}vehicles/${addOrUpdate}`, vehicle, Helpers.headers).then((response) => {
-            console.log("Added Vehilce", response.data);
+            // console.log("Added Vehilce", response.data);
             const selectedVehicle = {
                 label: response.data.name + " " + response.data.model + "",
                 value: response.data,
