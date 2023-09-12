@@ -95,7 +95,6 @@ export default function AddReceipt() {
 
 
   const handleCustomerChange = (selected) => {
-    console.log(selected);
     if (selected) {
       setSelectedCustomer(selected);
       // if (selected.value.tax === "Taxable") {
@@ -360,7 +359,9 @@ export default function AddReceipt() {
     data.isDraft = 1;
     data.created_date = Helpers.getCurrentDateTime();
     //   const addOrUpdate = isEditing ? "update" : "add";
-    axios.post(`${Helpers.baseUrl}receipts/add`, data, Helpers.headers).then((response) => {
+    if(receipt.customer){
+
+      axios.post(`${Helpers.baseUrl}receipts/add`, data, Helpers.headers).then((response) => {
         // setIsEditing(false);
         Helpers.toast("success", "Receipt saved as Draft successfully");
         setBtnLoading(false);
@@ -369,7 +370,14 @@ export default function AddReceipt() {
         setErrors(Helpers.error_response(error));
         setBtnLoading(false);
     });
-  };
+  }else{
+    setErrors({
+      ...errors,
+      customer: "Customer is required",
+    })
+  }
+}
+
 
   const [inputText, setInputText] = useState("");
 
@@ -464,7 +472,7 @@ export default function AddReceipt() {
                         targetModal={"addServiceModal"}
                         hasBtn={false}
                       />
-                      <AddSelectInput
+                      {/* <AddSelectInput
                         isMulti={true}
                         label={"Select Technician"}
                         options={technicianOptions}
@@ -474,12 +482,12 @@ export default function AddReceipt() {
                         onBtnClick={() => {}}
                         targetModal={"addServiceModal"}
                         hasBtn={false}
-                      />
+                      /> */}
                       <Input
                         label={"Tax"}
                         value={receipt.taxType}
                         onChange={handleTaxChange}
-                        placeholder={"Payment Paid"}
+                        placeholder={"Tax"}
                         type={"number"}
                       />
                       <AddSelectInput
@@ -613,6 +621,7 @@ export default function AddReceipt() {
                                   <thead>
                                     <tr>
                                       <th>Service</th>
+                                      <th>Technician</th>
                                       <th>Unit Price</th>
                                       <th>Qty.</th>
                                       <th>Total Price</th>
@@ -622,6 +631,7 @@ export default function AddReceipt() {
                                 <tbody>
                                   {receipt.services &&
                                     receipt.services.map((service, i) => (
+                                      <>
                                       <tr key={i}>
                                         <td>
                                           {service.value.name}{" "}
@@ -640,12 +650,15 @@ export default function AddReceipt() {
                                           </span>{" "}
                                           <br />
                                         </td>
+                                        <td>{service.value.technicianName}</td>
                                         <td>${service.value.price}</td>
                                         <td>{service.value.quantity}</td>
                                         <td>${service.value.total_price}</td>
                                       </tr>
+                                      </>
                                     ))}
                                   {receipt.taxIncluded == true ? (
+                                      <>
                                     <tr>
                                       <th>SubTotal</th>
                                       <th></th>
@@ -660,6 +673,7 @@ export default function AddReceipt() {
                                         ).toFixed(2)}
                                       </th>
                                     </tr>
+                                      </>
                                   ) : null}
                                   {receipt.tiresTax != 0 ? (
                                     <tr>
@@ -729,6 +743,7 @@ export default function AddReceipt() {
           modalState={setShowCustomerModal}
           handleCustomerChange={handleCustomerChange}
           setCustomersOptions={setCustomersOptions}
+          searchCustomer={inputText}
         />
         <AddVehicleReceipt
           showModal={showVehilcleModal}

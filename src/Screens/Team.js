@@ -13,7 +13,7 @@ import ActionButton from "../Components/ActionButton";
 function Team() {
     const addTeamMemberRef = useRef(null);
     const permissions = usePermissions();
-    console.log(permissions);
+    // console.log(permissions);
     useTitle("Team Management");
 
     const [teams, setTeams] = useState([]);

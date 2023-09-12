@@ -1,11 +1,22 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState,  useReducer } from "react";
 import Modal from "../Modal";
 import Input from "../Input";
 import Button from "../Button";
 import $ from 'jquery'
+import AddSelectInput from "./AddSelectInput";
+import { customerReducer } from "../../Reducers/CustomerReducer";
 
 const SelectedService = ({ lastService, modalState, showModal, setSelectedServices, selectedServices, setLastSelectedService, calculateTotalServices }) => {
     const [service, setService] = useState({});
+    
+    
+  const [receiptRed, dispatch] = useReducer(customerReducer);
+    // Errors
+  const [errors, setErrors] = useState({});
+
+    //Technician
+    let [technicianOptions, setTechnicianOptions] = useState();
+    let [selectedTechnician, setSelectedTechnician] = useState([]);
     const handleQty = e => {
         let inputValue = e.target.value;
         if(!isNaN(inputValue)){
@@ -13,6 +24,14 @@ const SelectedService = ({ lastService, modalState, showModal, setSelectedServic
         }
     }
     
+    const handleTechnicianChange = (e) => {
+        setSelectedTechnician(e)
+        let inputValue = e.label;
+        if(inputValue){
+            setService({...service, technicianName: inputValue})
+        }
+      };
+
     const handlePrice = e => {
         let inputValue = e.target.value;
         if(!isNaN(inputValue)){
@@ -21,22 +40,31 @@ const SelectedService = ({ lastService, modalState, showModal, setSelectedServic
     }
     const handelSaveService = e => {
         e.preventDefault();
-        let total = service.price * service.quantity;
-        setService({...service, total_price: total});
-        selectedServices[selectedServices.length - 1].value = service;
-        selectedServices[selectedServices.length - 1].label = `${service.name} ($${service.price})`;
-        setLastSelectedService(null);
-        setSelectedServices(selectedServices);
-        calculateTotalServices();
-        setService({});
-        modalState(false);
-        $('.modal-backdrop').hide();
+        if(service.technicianName){
+
+            let total = service.price * service.quantity;
+            setService({...service, total_price: total});
+            selectedServices[selectedServices.length - 1].value = service;
+            selectedServices[selectedServices.length - 1].label = `${service.name} ($${service.price})`;
+            setLastSelectedService(null);
+            setSelectedServices(selectedServices);
+            calculateTotalServices();
+            setService({});
+            modalState(false);
+            $('.modal-backdrop').hide();
+        }else{
+            setErrors({
+                technicianName: "Please select the technician"
+            })
+        }
     }
     useEffect(() => {
         if(lastService){
-            setService(lastService.value);
+            setService({ ...lastService.value, quantity: 5});
         }
-        console.log(lastService);
+        
+    dispatch({ type: "getTechnicians", states: { setTechnicianOptions } });
+        // console.log(lastService);
     }, []);
     return (
         <Modal show={showModal} modalId={"ServiceModal"} modalTitle={service.name} showModalState={modalState}>
@@ -46,6 +74,16 @@ const SelectedService = ({ lastService, modalState, showModal, setSelectedServic
                 }} />
                 <Input label={"Quantity"} value={service.quantity} type="number" placeholder={"Quantity"} onChange={handleQty} />
                 <Input label={"Price ($)"} value={service.price} type="number" placeholder={"Price"} onChange={handlePrice} />
+                <AddSelectInput
+                isMulti={false}
+                label={"Select Technician"}
+                options={technicianOptions}
+                selected={selectedTechnician}
+                error={selectedTechnician.length === 0 ? errors.technicianName : ""}
+                onChange={handleTechnicianChange}
+                targetModal={"addServiceModal"}
+                hasBtn={false}
+                />
                 <table className="table">
                     <thead>
                         <tr className="text-center">

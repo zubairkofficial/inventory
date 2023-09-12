@@ -100,7 +100,7 @@ function MonthlyReports() {
                 
           </div>
         </div>
-        <div className="card" id="contactList">
+        {/* <div className="card" id="contactList">
             <div className="card-body">
                 <CardHeader title={"Vehicles Annually"} setState={setVehicle} data={vehiclesData} fields={["name", "model", "year", "vin_number", 'customer.name']} />
                 <DataTable
@@ -132,9 +132,9 @@ function MonthlyReports() {
                   No data available to display
                 </div> : null}
             </div>
-        </div>
+        </div> */}
 
-        <div className="card" id="contactList">
+        {/* <div className="card" id="contactList">
             <div className="card-body">
                 <CardHeader title={"Receipts Annually"} setState={setReceipts} data={receiptsData} fields={["customer.name", "vehicle.name", "totalPrice", "paid", 'remaining', 'status']} />
                 <DataTable
@@ -178,7 +178,7 @@ function MonthlyReports() {
                   No data available to display
                 </div> : null}
             </div>
-        </div>
+        </div> */}
       </div>
     </div>
   );
