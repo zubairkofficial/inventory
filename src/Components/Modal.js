@@ -1,9 +1,10 @@
 import $ from 'jquery'
 
-const Modal = ({ modalId, modalTitle, children, show = false, showModalState }) => {
+const Modal = ({ modalId, modalTitle, children, show = false, showModalState, onClose }) => {
     const closeModal = () => {
         showModalState(false);
         $('.modal-backdrop').hide();
+        if (onClose) onClose();
     }
     return (
         <div

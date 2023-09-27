@@ -58,28 +58,43 @@ export default function Home(){
 
         //   Check if the Customer is New
         let newCustomers = [];
+        let uniqueCustomerIds = new Set();
 for (let i = 0; i < response.data.receipts.length; i++) {
     const currentTime = moment().format('YYYY-MM-DD');
     let customerTime = moment(response.data.receipts[i].customer.createdAt).format('YYYY-MM-DD');
     if(currentTime==customerTime){
-        newCustomers.push(customerTime)
+        // newCustomers.push(customerTime)
+        if (!uniqueCustomerIds.has(response.data.receipts[i]._id)) {
+            // Add the customer ID to the Set if it's not already there
+            uniqueCustomerIds.add(response.data.receipts[i]._id);
+          }
     }
 }
+    newCustomers.push(uniqueCustomerIds);
     newCustomers.reverse();
+
+    // newCustomers.reverse();
     setnewCustomerCount(newCustomers);
-        
-    //   Check if the Vehicles is New
-        let newVehicle = [];
+
+// Check New Vehicles
+// Check if the Vehicle is New
+let newVehicles = [];
+let uniqueVehicleIds = new Set();
+
 for (let i = 0; i < response.data.receipts.length; i++) {
     const currentTime = moment().format('YYYY-MM-DD');
     let vehicleTime = moment(response.data.receipts[i].vehicle.createdAt).format('YYYY-MM-DD');
-    // console.log(moment(response.data.receipts[2].vehicle.createdAt).format('YYYY-MM-DD'))
-    if(currentTime==vehicleTime){
-        newVehicle.push(vehicleTime)
+
+    if(currentTime == vehicleTime){
+        if (!uniqueVehicleIds.has(response.data.receipts[i]._id)) {
+            uniqueVehicleIds.add(response.data.receipts[i]._id);
+        }
     }
 }
-    newVehicle.reverse();
-    setNewVehicle(newVehicle);
+
+newVehicles.push(uniqueVehicleIds);
+newVehicles.reverse();
+setNewVehicle(newVehicles);
 
 
         //   Customer
@@ -127,32 +142,45 @@ for (let i = 0; i < response.data.receipts.length; i++) {
 customers.reverse();
 setCustomers(customers);
 
-   //   Check if the Vehicles is New
-   let newVehicle = [];
-   for (let i = 0; i < response.data.receipts.length; i++) {
-       const currentTime = moment().format('YYYY-MM-DD');
-       let vehicleTime = moment(response.data.receipts[i].vehicle.createdAt).format('YYYY-MM-DD');
-    // console.log(moment(response.data.receipts[i].vehicle.createdAt).format('YYYY-MM-DD'))
-       if(currentTime==vehicleTime){
-           newVehicle.push(vehicleTime)
-       }
-   }
-       newVehicle.reverse();
-       setNewVehicle(newVehicle);
+
+// Check New Vehicles
+// Check if the Vehicle is New
+let newVehicles = [];
+let uniqueVehicleIds = new Set();
+
+for (let i = 0; i < response.data.receipts.length; i++) {
+    const currentTime = moment().format('YYYY-MM-DD');
+    let vehicleTime = moment(response.data.receipts[i].vehicle.createdAt).format('YYYY-MM-DD');
+
+    if(currentTime == vehicleTime){
+        if (!uniqueVehicleIds.has(response.data.receipts[i]._id)) {
+            uniqueVehicleIds.add(response.data.receipts[i]._id);
+        }
+    }
+}
+
+newVehicles.push(uniqueVehicleIds);
+newVehicles.reverse();
+setNewVehicle(newVehicles);
    
 
 
-// Check New Customers
-let newCustomers = [];
-for (let i = 0; i < response.data.receipts.length; i++) {
-    const currentTime = moment().format('YYYY-MM-DD');
-    let customerTime = moment(response.data.receipts[i].customer.createdAt).format('YYYY-MM-DD');
-    if(currentTime==customerTime){
-        newCustomers.push(customerTime)
-    }
-}
-    newCustomers.reverse();
-    setnewCustomerCount(newCustomers);
+        // Check New Customers
+        //   Check if the Customer is New
+        let newCustomers = [];
+        let uniqueCustomerIds = new Set();
+        for (let i = 0; i < response.data.receipts.length; i++) {
+        const currentTime = moment().format('YYYY-MM-DD');
+        let customerTime = moment(response.data.receipts[i].customer.createdAt).format('YYYY-MM-DD');
+        if(currentTime==customerTime){
+        if (!uniqueCustomerIds.has(response.data.receipts[i]._id)) {
+            uniqueCustomerIds.add(response.data.receipts[i]._id);
+        }
+        }
+        }
+        newCustomers.push(uniqueCustomerIds);
+        newCustomers.reverse();
+        setnewCustomerCount(newCustomers);
 
 
 // Vehicles

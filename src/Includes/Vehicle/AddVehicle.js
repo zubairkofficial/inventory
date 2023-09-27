@@ -62,11 +62,11 @@ const AddVehicle = forwardRef(({ getVehicles, setShowForm }, ref) => {
     useImperativeHandle(ref, () => ({
         handleEdit(vehicleToEdit){
             setIsEditing(true);
+            setVehicle(vehicleToEdit);
             setSelectedCustomer({
                 label: vehicleToEdit.customer.name,
                 value: vehicleToEdit.customer,
             });
-            setVehicle(vehicleToEdit);
         }
     }));
 

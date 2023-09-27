@@ -29,6 +29,7 @@ function DailyReports() {
   const [totalDiscount, setTotalDiscount] = useState(0);
   const [totalTax, setTotalTax] = useState(0);
   const [netSale, setNetSale] = useState(0);
+  const [grossSale, setGrossSale] = useState(0);
   const [cardPayment, setCardPayment] = useState(0);
   const [cashPayment, setCashPayment] = useState(0);
   const [checkPayment, setCheckPayment] = useState(0);
@@ -134,8 +135,13 @@ function DailyReports() {
   };
 
   const calcNetSale = () =>{
-    let net_sale = receipts.reduce((acc, receipt) => acc + receipt.totalPrice, 0);
+    let net_sale = receipts.reduce((acc, receipt) => acc + receipt.totalPrice - receipt.discount, 0);
     setNetSale(net_sale)
+  };
+
+  const calcGrossSale = () =>{
+    let gross_sale = receipts.reduce((acc, receipt) => acc + receipt.totalPrice, 0);
+    setGrossSale(gross_sale)
   };
 
   const calcCardPayment = () => {
@@ -271,6 +277,7 @@ function DailyReports() {
     calcCashPayment();
     calcCheckPayment();
     todayTotalRemaining();
+    calcGrossSale();
   }, [receipts]);
 
   return (
@@ -322,52 +329,52 @@ function DailyReports() {
                     <tr>
                       <td>Total Sales to Non-Taxable Customers</td>
                       <td>---</td>
-                      <td>$ {dealersSale}</td>
+                      <td>$ {Math.round(dealersSale*100)/100}</td>
                     </tr>
                     <tr>
                       <td>Total Discounts</td>
                       <td>---</td>
-                      <td>$ {totalDiscount}</td>
+                      <td>$ {Math.round(totalDiscount*100)/100}</td>
                     </tr>
                     <tr>
                       <td>Total Tax</td>
                       <td>---</td>
-                      <td>$ {totalTax}</td>
+                      <td>$ {Math.round(totalTax*100)/100}</td>
                     </tr>
                     <tr>
                       <td>Net Sales</td>
                       <td>---</td>
-                      <td>$ {netSale - totalTax}</td>
+                      <td>$ {Math.round(netSale*100)/100}</td>
                     </tr>
                     <tr>
                       <td>Gross Sales</td>
                       <td>---</td>
-                      <td>$ {netSale - totalDiscount}</td>
+                      <td>$ {Math.round(grossSale*100)/100}</td>
                     </tr>
                     <tr>
                       <td>Total Paid w/ Cash</td>
                       <td>---</td>
-                      <td>$ {cashPayment}</td>
+                      <td>$ {Math.round(cashPayment*100)/100}</td>
                     </tr>
                     <tr>
                       <td>Total Paid w/ Card</td>
                       <td>---</td>
-                      <td>$ {cardPayment}</td>
+                      <td>$ {Math.round(cardPayment*100)/100}</td>
                     </tr>
                     <tr>
                       <td>Total Paid w/ Check</td>
                       <td>---</td>
-                      <td>$ {checkPayment}</td>
+                      <td>$ {Math.round(checkPayment*100)/100}</td>
                     </tr>
                     <tr>
                       <td>Today Total Owed (Fleet Accounts)</td>
                       <td>---</td>
-                      <td>$ {todayRemaining}</td>
+                      <td>$ {Math.round(todayRemaining*100)/100}</td>
                     </tr>
                     <tr>
                       <td>Total Owed (Fleet Accounts)</td>
                       <td>---</td>
-                      <td>$ {totalRemaining}</td>
+                      <td>$ {Math.round(totalRemaining*100)/100}</td>
                     </tr>
                   </tbody>
                 </table>

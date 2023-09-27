@@ -100,6 +100,7 @@ export default function EditDraft() {
     axios
       .get(`${Helpers.baseUrl}receipts/details/${receipt_id}`, Helpers.headers)
       .then((response) => {
+        console.log(response.data)
         const customer = {
             label: response.data.customer.name + " ("+response.data.customer.phone + ")",
             value: response.data.customer
@@ -374,10 +375,30 @@ export default function EditDraft() {
     }
   }, [sendRequest]);
 
-  const handleSaveDraft = (e) => {
+  const handleSaveDraft = async (e) => {
     e.preventDefault();
-    setSendRequest(true);
-    setReceipt({ ...receipt, isDraft: 1 });
+    setBtnLoading(true);
+    setErrors({});
+    let data = receipt;
+    data.isDraft = 1;
+    data.created_date = Helpers.getCurrentDateTime();
+    //   const addOrUpdate = isEditing ? "update" : "add";
+    if(receipt.customer){
+      axios.post(`${Helpers.baseUrl}receipts/add`, data, Helpers.headers).then((response) => {
+        // setIsEditing(false);
+        Helpers.toast("success", "Receipt saved as Draft successfully");
+        setBtnLoading(false);
+        navigate("/user/drafts");
+    }).catch((error) => {
+        setErrors(Helpers.error_response(error));
+        setBtnLoading(false);
+    });
+  }else{
+    setErrors({
+      ...errors,
+      customer: "Customer is required",
+    })
+  }
   };
 
   useEffect(() => {
@@ -541,6 +562,7 @@ export default function EditDraft() {
                               event.preventDefault();
                               setReceipt(receiptInit);
                               setIsEditing(false);
+                              navigate('/user/receipts/')
                             }}
                             // isLoading={btnLoading}
                           />

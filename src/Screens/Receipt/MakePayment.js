@@ -21,6 +21,7 @@ export default function MakePayment() {
   const [receipt, setReceipt] = useState([]);
   const [payment, setPayment] = useState([]);
   const [errors, setErrors] = useState({});
+  const [amount, setAmount] = useState(0)
   const { receipt_id } = useParams();
   const [btnLoading, setBtnLoading] = useState(false);
   let today = new Date().toISOString().split("T")[0];
@@ -31,11 +32,12 @@ export default function MakePayment() {
       .get(`${Helpers.baseUrl}receipts/details/${receipt_id}`, Helpers.headers)
       .then((response) => {
         setReceipt(response.data);
+        console.log(response)
         setPayment({
           ...payment,
           receipt_id: response.data._id,
           amount_due: response.data.remaining,
-          amount_remaining: 0,
+          amount_remaining: response.data.remaining,
           amount_paid: response.data.remaining,
         });
       })
@@ -54,15 +56,17 @@ export default function MakePayment() {
     }
   };
 
+
   const handlePaidAmount = (e) => {
-    const paid = e.target.value;
+      setAmount(e.target.value)
+      let paid = e.target.value;
     const due = parseFloat(payment.amount_due);
     const remaining = (due - paid).toFixed(2);
     let p_status = "Unpaid";
     if (parseInt(remaining) > 0) {
       p_status = "Partialy Paid";
     } else {
-      p_status = "Paid";
+      p_status = "Paid"; 
     }
     let org_paid = parseInt(receipt.paid);
     org_paid += parseFloat(paid);
@@ -75,12 +79,15 @@ export default function MakePayment() {
       paid: org_paid,
       status: p_status,
     });
-  };
-
+    console.log(payment)
+  }
+  
   const handleSavePayment = (e) => {
     e.preventDefault();
-    setBtnLoading(true);
-    axios
+    if(amount){
+
+      setBtnLoading(true);
+      axios
       .post(`${Helpers.baseUrl}receipts/add-payment`, payment, Helpers.headers)
       .then((response) => {
         Helpers.toast("success", "Payment Added successfully");
@@ -92,7 +99,11 @@ export default function MakePayment() {
         setErrors(Helpers.error_response(error));
         setBtnLoading(false);
       });
-  };
+    } else { 
+    Helpers.toast("error", "Please set the value")
+    }
+    };
+
 
   useEffect(() => {
     getReceipt();
@@ -366,7 +377,7 @@ export default function MakePayment() {
                   />
                   <Input
                     label={"Amount Paid"}
-                    value={payment.amount_paid}
+                    value={amount}
                     type={"number"}
                     error={errors.amount_paid}
                     onChange={handlePaidAmount}

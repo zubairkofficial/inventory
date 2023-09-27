@@ -310,8 +310,9 @@ export default function ReceiptDetails() {
                         <tbody id="products-list">
                           {receipt.services
                             ? receipt.services.map((service, i) => {
+                              {console.log(receipt.services)}
                                 return [
-                                  <tr>
+                                  <tr key={receipt._id}>
                                     <td className="text-start">
                                       <span className="fw-medium">
                                         {service.value.name}<br/>
@@ -349,7 +350,7 @@ export default function ReceiptDetails() {
                                     <td>{service.value.quantity}</td>
                                     <td>$ {service.value.pricePerQuartz}</td>
                                     <td className="text-end">
-                                      $ {service.value.total_price}
+                                     $ {service.value.total_price}
                                     </td>
                                   </tr>,
                                 ];

@@ -37,8 +37,9 @@ function Vehicles() {
   };
 
 
-  const hanldeEdit = (serviceToEdit) => {
-    addVehicleRef.current.handleEdit(serviceToEdit);
+  const hanldeEdit = (vehicleToEdit) => {
+    addVehicleRef.current.handleEdit(vehicleToEdit);
+    setShowForm(true);
   };
 
   const handleDelete = (vehicleId) => {

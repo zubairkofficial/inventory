@@ -132,6 +132,7 @@ export default function AddReceipt() {
   };
 
   const handleServicesChange = (selected) => {
+
     if (selected.length === 0) {
       setReceipt({ ...receipt, totalPrice: 0, remaining: 0, tax: 0 });
     }
@@ -140,6 +141,7 @@ export default function AddReceipt() {
       setSelectedServices(selected);
       calculateTotalServices();
       setReceipt({ ...receipt, services: selected });
+      console.log("Receipt: ",receipt)
       if (selected.length > 0 && selected.length > previousLength) {
         setLastSelectedService(selected[selected.length - 1]);
         setShowServiceModal(true);
@@ -150,6 +152,11 @@ export default function AddReceipt() {
   };
 
   const handleTiresChange = (selected) => {
+    setReceipt({
+      ...receipt , 
+      tiresTax: 0
+    })
+
     setSelectedTires(selected);
     
     const services = selectedServices.concat(selected);
@@ -269,19 +276,22 @@ export default function AddReceipt() {
     let tiresTotalPrice = 0;
 
     if (selectedServices.length === 0) {
-      setReceipt({ ...receipt, totalPrice: 0, remaining: 0, tax: 0 });
+      setReceipt({ ...receipt, totalPrice: 0, remaining: 0, tax: 0, tiresTax: 0 });
     } else {
-      for (let i = 0; i < selectedServices.length; i++) {
-        if (selectedServices[i].value.type === "tire_service") {
-          tiresTotalPrice += parseFloat(selectedServices[i].value.total_price);
-        }
+
+        for (let i = 0; i < selectedServices.length; i++) {
+          if (selectedServices[i].value.type === "tire_service") {
+            tiresTotalPrice += parseFloat(selectedServices[i].value.total_price);
+            console.log(selectedServices[i])
+          }
         if (selectedServices[i].value.tax === "Taxable") {
           taxPrice += parseFloat(selectedServices[i].value.total_price);
         }
         prices += parseFloat(selectedServices[i].value.total_price);
       }
-      prices = prices.toFixed(2);
 
+      prices = prices.toFixed(2);
+      
       let tireTax = 0;
       tireTax = ((parseFloat(tiresTotalPrice) * 2) / 100).toFixed(2);
 
@@ -305,6 +315,7 @@ export default function AddReceipt() {
       });
     }
   };
+  // console.log(receipt)
 
   const handleSaveReceipt = (e) => {
     e.preventDefault();
@@ -312,11 +323,12 @@ export default function AddReceipt() {
     // console.log(date);
     setBtnLoading(false);
     setErrors({});
-    if(receipt.services){
-      if(receipt.status){
-        let data = receipt;
-        receipt.created_date = Helpers.getCurrentDateTime();
-        axios
+
+      if(receipt.services){
+        if(receipt.status){
+          let data = receipt;
+          receipt.created_date = Helpers.getCurrentDateTime();
+          axios
           .post(`${Helpers.baseUrl}receipts/add`, data, Helpers.headers)
           .then((response) => {
             // console.log(response.data);
@@ -378,11 +390,31 @@ export default function AddReceipt() {
   }
 }
 
+const servicesClosed = ()=>{
+  if (selectedServices.length > 0) {
+    const newSelectedServices = selectedServices.slice(0, -1); // Create a new array excluding the last item
+    setSelectedServices(newSelectedServices); // Set the new array to the state
+  }
+  if (selectedTires.length > 0) {
+    const newSelectedTires = selectedTires.slice(0, -1); // Create a new array excluding the last item
+    setSelectedTires(newSelectedTires); // Set the new array to the state
+  }
+
+  setReceipt(receipt => {
+    let newServices = [...receipt.services];
+    newServices.pop(); // removes the last element from the array
+
+    return {
+      ...receipt,
+      services: newServices
+    };
+  });
+}
 
   const [inputText, setInputText] = useState("");
 
   const handleInputChange = (inputText, meta) => {
-    debugger;
+    // debugger;
     if (meta.action !== "input-blur" && meta.action !== "menu-close") {
       setInputText(inputText);
     }
@@ -457,7 +489,8 @@ export default function AddReceipt() {
                         options={serviceOptions}
                         selected={selectedServices}
                         error={selectedServices.length === 0 ? errors.services : ""}
-                        onChange={handleServicesChange}
+                        // onChange={handleServicesChange}
+                        onChange={service => handleServicesChange(service)}
                         onBtnClick={() => {}}
                         targetModal={"addServiceModal"}
                       />
@@ -653,7 +686,7 @@ export default function AddReceipt() {
                                         <td>{service.value.technicianName}</td>
                                         <td>${service.value.price}</td>
                                         <td>{service.value.quantity}</td>
-                                        <td>${service.value.total_price}</td>
+                                        <td>${Math.round(service.value.total_price * 100) / 100}</td>
                                       </tr>
                                       </>
                                     ))}
@@ -761,6 +794,7 @@ export default function AddReceipt() {
             selectedServices={selectedServices}
             setLastSelectedService={setLastSelectedService}
             calculateTotalServices={calculateTotalServices}
+            handleClose={servicesClosed}
           />
         )}
       </div>

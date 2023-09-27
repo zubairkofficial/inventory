@@ -65,6 +65,7 @@ export const customerReducer = (state, action) => {
     const getOils = () => {
         axios.get(`${Helpers.baseUrl}oils/all/${Helpers.authParentId}`, Helpers.headers).then((response) => {
             let resData = response.data.reverse();
+            console.log(response.data[0].quantity);
             for (let index = 0; index < resData.length; index++) {
                 const service = {
                     _id: response.data[index]._id,
@@ -72,7 +73,7 @@ export const customerReducer = (state, action) => {
                     price: response.data[index].pricePerVehicle,
                     extra_price: response.data[index].pricePerQuartz,
                     description: "",
-                    quantity: 1,
+                    stock: response.data[index].quantity,
                     total_price: response.data[index].pricePerVehicle,
                     tax: "Taxable",
                     type: "oil_service",
